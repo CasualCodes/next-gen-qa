@@ -10,7 +10,7 @@
     - start information processing procedure
   - [x] start django folder setup: django-admin startproject nextgen next-gen-qa (the names felt a bit ambiguous so it is changed to ngq_project from the folder name of django_ngq)
 
-# Next TODOS (01-13-2025) (backend)
-- development of scraper, prompt generator, and table generator (python) using prototype
-- development of dataset generator (fine-tuning) using prototype
-- finishing setups of ngq_project, ngq_app, for easy component integration (django)
+# Next TODOS (01-13-2025) (backend) (Updated: 01-14-2025)
+- [~] development of scraper, prompt generator, and table generator (python) using prototype
+  - development of dataset generator (fine-tuning) using prototype
+- [ ] finishing setups of ngq_project, ngq_app, for easy component integration (django)
