@@ -16,4 +16,14 @@
 
 # Next TODOS (01-18-2025) (backend) (Updated: 01-18-2025)
 - [ ] development (scraper, prompt generator, llm, table generator, backend) for system proper
+  - TODO Compilation:
+    - Scraper
+      - Add Driver Checking (Checking what browser to use for scraping purposes)
+    - Prompt Generator
+      - Experiment with prompts (datset generation)
+      - Adjust/Recode for system proper
+    - Table Generator
+      - Code for developing the test case tables
+    - Dataset Generator
+      - Add Loop and List Methods for easier scraping and generation for a list of URLs
 - [ ] finishing setups of ngq_project, ngq_app, for easy component integration (django)
