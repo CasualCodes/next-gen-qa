@@ -14,16 +14,16 @@
 - [x] development of scraper, prompt generator, and table generator (python) using prototype (V1)
   - [x] development of dataset generator (fine-tuning) using prototype (V1)
 
-# Next TODOS (01-18-2025) (backend) (Updated: 01-18-2025)
+# Next TODOS (01-18-2025) (backend) (Updated: 01-21-2025)
+- [ ] finishing setups of ngq_project, ngq_app, for easy component integration (django)
 - [ ] development (scraper, prompt generator, llm, table generator, backend) for system proper
   - TODO Compilation:
     - Scraper
-      - Add Driver Checking (Checking what browser to use for scraping purposes)
+      - [ ] Add Driver Checking (Checking what browser to use for scraping purposes)
     - Prompt Generator
-      - Experiment with prompts (datset generation)
-      - Adjust/Recode for system proper
+      - [ ] Experiment with prompts (datset generation)
+      - [x] Adjust/Recode for system proper
     - Table Generator
-      - Code for developing the test case tables
+      - [x] Code for developing the test case tables
     - Dataset Generator
       - Add Loop and List Methods for easier scraping and generation for a list of URLs
-- [ ] finishing setups of ngq_project, ngq_app, for easy component integration (django)
