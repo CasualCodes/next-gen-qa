@@ -27,3 +27,6 @@
       - [x] Code for developing the test case tables
     - Dataset Generator
       - Add Loop and List Methods for easier scraping and generation for a list of URLs
+
+# Extra TODOS
+- [ ] Hugging Face Implementation Version of using Llama 3.1 8b
