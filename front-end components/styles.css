@@ -1,0 +1,257 @@
+/* General Reset */
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: white;
+    color: black;
+}
+
+/* navigation */
+nav {
+    width: 100%;
+    position: fixed;
+    background-color: /*#68aeae*/ white;
+    padding: 10px 20px;
+    border-bottom: 1px solid #ccc;
+}
+nav .logo a{
+    font-size: 24px;
+    font-weight: bold;
+    color: black;
+    text-decoration: none; 
+}
+nav .logo a:hover {
+    color: /*#333*/ #68aeae;
+}
+
+/* hero */
+.hero {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background-color: #68aeae;
+}
+.hero h1 {
+    font-size: 46px;
+    margin-bottom: 10px;
+}
+.hero p {
+    font-size: 18px;
+    margin-bottom: 20px;
+}
+.hero .input-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+.hero input {
+    padding: 10px;
+    font-size: 16px;
+    width: 300px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.hero button {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.hero button:hover {
+    background-color: #333;
+}
+
+/* features */
+.features {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 200px;
+    padding: 50px 20px;
+    background-color: #f3f3f3;
+    text-align: center;
+}
+.feature {
+    max-width: 300px;
+}
+.feature h3 {
+    font-size: 28px;
+}
+.circle {
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    background-color: black;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 20px;
+    font-size: 24px;
+}
+
+/* about */
+.about {
+    padding: 50px 300px;
+    text-align: center;
+}
+.about h2 {
+    font-size: 26px;
+    margin-bottom: 20px;
+}
+.about p {
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+/* FAQ */
+.faq {
+    padding: 50px 150px;
+    background-color: #f9f9f9;
+    text-align: center;
+}
+.faq h2 {
+    text-align: center;
+    margin-bottom: 30px;
+}
+.faq-item {
+    margin-bottom: 20px;
+}
+.faq-item h4 {
+    font-size: 18px;
+    margin-bottom: 5px;
+}
+.faq-item p {
+    font-size: 16px;
+    margin: 0;
+}
+
+/* footer 
+footer {
+    text-align: center;
+    padding: 10px;
+    background-color: #eaeaea;
+    border-top: 1px solid #ccc;
+    font-size: 14px;
+}*/
+
+
+/*************************LOADING SCREEN*************************/
+/* loading spinner test */
+.loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    text-align: center;
+    background-color: #68aeae;
+    color: white;
+}
+
+.loading .spinner {
+    width: 50px;
+    height: 50px;
+    border: 5px solid rgba(255, 255, 255, 0.3);
+    border-top: 5px solid white;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin-bottom: 20px;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+
+/*************************RESULT SCREEN*************************/
+/* results table */
+main.results {
+    
+    padding: 100px 20px;
+    min-height: calc(100vh - 140px); /* Adjust for footer height */
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* info */
+.info p {
+    margin: 0;
+    font-size: 16px;
+}
+
+/* header row */
+.header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+.generated-count {
+    font-size: 18px;
+    font-weight: bold;
+}
+.buttons {
+    display: flex;
+    gap: 10px;
+}
+.buttons button {
+    padding: 10px 15px;
+    font-size: 16px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
+.buttons button:hover {
+    background-color: #333;
+}
+
+/* summary */
+.summary {
+    font-size: 16px;
+    margin: 0;
+}
+
+/* table */
+.table-container {
+    overflow-x: auto;
+}
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+}
+th, td {
+    border: 1px solid #ddd;
+    padding: 10px;
+    text-align: left;
+}
+th {
+    background-color: #f4f4f4;
+    font-weight: bold;
+}
+
+/* footer */
+footer {
+    margin-top: auto; /* Push footer to the bottom if content is short */
+    padding: 10px;
+    background-color: #eaeaea;
+    border-top: 1px solid #ccc;
+    text-align: center;
+    font-size: 14px;
+}
