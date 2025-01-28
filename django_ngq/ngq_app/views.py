@@ -4,16 +4,23 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 
 from .forms import URLForm
+from .utils import data_scrape, dataframe_init, create_table_dataset, load_model_chain, create_test_cases, csv_from_test_case_batches
 
-
-# Create your views here.
+# Create your views here
 def index(request):
     # Setup Form Pseudocode
     #   - input 'Enter URL'
     #   - submit
+    form = URLForm()
     
     # Index page pseudocode (Core function)
-    # # if form.is_valid():
+    if request.method == "POST":
+        form = URLForm(request.POST)
+        if form.is_valid():
+            print(True)
+            print(form.cleaned_data['url'])
+        else :
+            print(False)
     # - After submit, load loading widget
     # - After loading widget, run scraper->promptgenerator->llm->table_generator pipeline
     # # data = generate_table(generate_test_cases(scrape_url(url)))
@@ -24,7 +31,7 @@ def index(request):
 
     # else : 
     # Load HTML
-    return HttpResponse("Hello, world. You're at the index page.")
+    return render(request, "ngq_app/home.html", {"form": form})
 
 def results(request):
     # Results Page Pseudocode

@@ -1,0 +1,92 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Next-Gen QA</title>
+    <link rel="stylesheet" href="{% static 'ngq_app/styles.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <a href="home.html">Next-Gen QA</a>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero">
+        <h1>Welcome to Next-Gen QA</h1>
+        <p>Enter your website URL to create test cases</p>
+        <form class="input-container" action="/" method="post">
+            {% csrf_token %}
+            {{ form }}
+            <input id="generate-btn" type="submit">Generate</input>
+            <!-- <input id="url-input" type="url" placeholder="Input your valid URL here" required> -->
+            <!-- <button id="generate-btn">Generate</button> -->
+        </form>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features">
+        <div class="feature">
+            <div class="circle">
+                <span class="icon">&#128736;</span>
+            </div>
+            <h3>Automate Test Case Creation</h3>
+            <p>Generate accurate and efficient test cases in seconds.</p>
+        </div>
+        <div class="feature">
+            <div class="circle">
+                <span class="icon">&#128190;</span>
+            </div>
+            <h3>Download Results</h3>
+            <p>Easily export test cases in CSV format.</p>
+        </div>
+    </section>
+
+    <!-- About Section -->
+    <section class="about">
+        <h2>About Next-Gen QA</h2>
+        <p>Next-Gen QA simplifies website testing by automatically generating detailed test cases based on your website's structure and content. Our platform allows you to quickly create comprehensive test cases, covering key aspects of your site with ease. These generated test cases can be easily downloaded and integrated into your existing testing workflow. With this tool, you can ensure that your website is thoroughly tested, reducing manual effort and accelerating the testing process. Focus on delivering a high-quality user experience with reliable, automated test case generation.</p>
+    </section>
+
+    <!-- FAQ Section -->
+    <section class="faq">
+        <h2>Frequently Asked Questions</h2>
+        <div class="faq-item">
+            <h4>Question 1?</h4>
+            <p>Answer 1</p>
+        </div>
+        <div class="faq-item">
+            <h4>Question 2?</h4>
+            <p>Answer 2</p>
+        </div>
+        <div class="faq-item">
+            <h4>Question 3?</h4>
+            <p>Answer 3</p>
+        </div>
+        <div class="faq-item">
+            <h4>Question 4?</h4>
+            <p>Answer 4</p>
+        </div>
+        <div class="faq-item">
+            <h4>Question 5?</h4>
+            <p>Answer 5</p>
+        </div>
+        <div class="faq-item">
+            <h4>Question 6?</h4>
+            <p>Answer 6</p>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Next-Gen QA | All Rights Reserved</p>
+    </footer>
+
+    <script src="{% static 'ngq_app/script.js'%}"></script>
+</body>
+</html>
