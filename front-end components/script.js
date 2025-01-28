@@ -34,7 +34,7 @@ if (window.location.pathname.includes("loading.html")) {
 ////////// results page
 document.addEventListener("DOMContentLoaded", () => {
     const testCaseCount = Math.floor(Math.random() * 10) + 1; // simulate number of test cases (1-10)
-    const websiteUrl = localStorage.getItem("userUrl") || "example.com";
+    const websiteUrl = sessionStorage.getItem("websiteURL") || "example.com";
     const timestamp = new Date().toLocaleString();
 
     // update page content dynamically
