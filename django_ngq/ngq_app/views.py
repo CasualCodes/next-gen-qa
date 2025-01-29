@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
@@ -18,9 +18,18 @@ def index(request):
         form = URLForm(request.POST)
         if form.is_valid():
             print(True)
-            print(form.cleaned_data['url'])
+            # print(form.cleaned_data['url'])
+            request.session['url'] = form.cleaned_data['url']
+            return redirect("loading", permanent=True)
         else :
             print(False)
+
+    # else : 
+    # Load HTML
+    return render(request, "ngq_app/home.html", {"form": form})
+
+def loading(request):
+    # TODO : Threading
     # - After submit, load loading widget
     # - After loading widget, run scraper->promptgenerator->llm->table_generator pipeline
     # # data = generate_table(generate_test_cases(scrape_url(url)))
@@ -28,10 +37,7 @@ def index(request):
     # # request.session['data'] = data
     # After running, redirect to results page with data
     # # HttpResponseRedirect('results')
-
-    # else : 
-    # Load HTML
-    return render(request, "ngq_app/home.html", {"form": form})
+    return render(request, "ngq_app/loading.html")
 
 def results(request):
     # Results Page Pseudocode
@@ -42,4 +48,4 @@ def results(request):
     # Other Buttons
 
     # Load HTML
-    return HttpResponse(f"Hello, world. You're at the results page")
+    return render(request, "ngq_app/results.html")

@@ -65,6 +65,15 @@ nav .logo a:hover {
     border-radius: 5px;
     cursor: pointer;
 }
+input[type=submit] {
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: black;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+}
 .hero button:hover {
     background-color: #333;
 }

@@ -20,10 +20,10 @@
     <section class="hero">
         <h1>Welcome to Next-Gen QA</h1>
         <p>Enter your website URL to create test cases</p>
-        <form class="input-container" action="/" method="post">
+        <form class="input-container" method="post">
             {% csrf_token %}
             {{ form }}
-            <input id="generate-btn" type="submit">Generate</input>
+            <input type="submit" id="generate-btn" value="Generate">
             <!-- <input id="url-input" type="url" placeholder="Input your valid URL here" required> -->
             <!-- <button id="generate-btn">Generate</button> -->
         </form>
