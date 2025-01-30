@@ -37,7 +37,7 @@
 
         <!-- Results Table -->
         <div class="table-container">
-            <table id="results-table">
+            <!-- <table id="results-table">
                 <thead>
                     <tr>
                         <th>Test ID</th>
@@ -47,30 +47,28 @@
                         <th>Expected Result</th>
                         <th>Actual Result</th>
                     </tr>
+                    <tr>
+                        {% for col in test_cases.columns %}
+                        <td>
+                            {{col}}
+                        </td>
+                        {% endfor %}
+                    </tr>
                 </thead>
                 <tbody>
-                    <!-- Rows will be dynamically generated -->
-                </tbody>
-            </table>
-
-            <!-- <table>
-            <tr>
-                {% for col in df.columns %}
-                <td>
-                    {{col}}
-                </td>
-                {% endfor %}
-            </tr>
-                {% for index, row in df.iterrows %}
-                <tr>
-                    {% for cell in row %}
-                    <td>
-                        {{cell}}
-                    </td>
+                    {% for index, row in test_cases.iterrows %}
+                    <tr>
+                        {% for cell in row %}
+                        <td>
+                            {{cell}}
+                        </td>
+                        {% endfor %}
+                    </tr>
                     {% endfor %}
-                </tr>
-                {% endfor %}
+                </tbody>
             </table> -->
+            {{test_cases|safe}}
+            
         </div>
     </main>
 
@@ -79,6 +77,6 @@
         <p>&copy; 2025 Next-Gen QA. All rights reserved.</p>
     </footer>
 
-    <script src="{% static 'ngq_app/script.js'%}"></script>
+    <!-- <script src="{% static 'ngq_app/script.js'%}"></script> -->
 </body>
 </html>

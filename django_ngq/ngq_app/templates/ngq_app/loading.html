@@ -22,6 +22,22 @@
         <p>Generating your test cases, please wait...</p>
     </section>
 
-    <script src="{% static 'ngq_app/script.js'%}"></script>
+    <!-- <script src="{% static 'ngq_app/script.js'%}"></script> -->
+    <script>
+        function processData() {
+            fetch('/process_data')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'completed') {
+                        window.location.href = '/results';
+                    }
+                });
+        }
+    
+        window.onload = function() {
+            processData();
+        };
+    </script>
+    
 </body>
 </html>

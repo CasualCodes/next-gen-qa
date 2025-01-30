@@ -111,7 +111,29 @@ from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 
 # CONTEXT V1
-template = """ Question:\n Generate test case for the following UI element: : {question} """
+# template = """ Question:\n Generate test case for the following UI element: : {question} """
+template = """
+You are a quality assurance expert that generates functional test cases for websites. You take in a UI element and you generate a functional test case for usability.
+
+Some UI elements have a link attached to them and other properties.
+ONLY output in the following format: 
+"Objective"~"Preconditions"~"Test Steps"~"Expected Result"
+DO NOT output any other text. DO NOT output 'Here are the test cases...'
+
+Example Input:
+Link Element: Home with URL : https://bicol-u.edu.ph/
+Link Element: Academics with URL : https://bicol-u.edu.ph/#
+Link Element 'Battle of New Orleans' With URL https://en.wikipedia.org/wiki/Battle_of_New_Orleans   
+...
+
+Example Output:
+"Verify the functionality of the Link Element 'Home'"~"The user is on the webpage 'https://bicol-u.edu.ph/'"~"'1. User navigates to the webpage \'https://bicol-u.edu.ph/\'' '2. Click on Link Element \'Home\'' '3. Verify if the webpage opens in a new tab/window.'"~"Webpage 'https://bicol-u.edu.ph/' should open in a new tab/window."
+"Verify the functionality of the Link Element 'Academics'"~"The user is on the webpage 'https://bicol-u.edu.ph/'"~"'1. User navigates to the webpage \'https://bicol-u.edu.ph/\'' '2. Click on Link Element \'Academics\'' '3. Verify if the link url changes to \'https://bicol-u.edu.ph/#\'' '4. Verify if a dropdown below \'Academics\' is visible'"~"A dropdown should show below 'Academics', but the webpage does not change"
+"Verify the functionality of the Link Element 'Battle of New Orleans'"~"The user is on the webpage 'https://en.wikipedia.org/'"~"'1. User navigates to the webpage 'https://en.wikipedia.org/' '' '2. Click on Link Element 'Battle of New Orleans'' '3. Verify if the link url changes to 'https://en.wikipedia.org/wiki/Battle_of_New_Orleans' '4. Verify if the webpage opens in a new tab/window'"~"Webpage 'https://en.wikipedia.org/wiki/Battle_of_New_Orleans/' should open in a new tab/window."
+...
+
+Here is the UI element : {question}
+"""
 model_str = "llama3.1"
 
 # Prompt Generator + LLM
@@ -174,16 +196,28 @@ def create_table_dataset(llm_output):
         id.append(i+1)
 
         # Test Case Objective
-        objective.append(split_test_case[0])
+        try:
+            objective.append(split_test_case[0])
+        except Exception:
+            objective.append('error')
 
         # Test Case Precondition
-        precondition.append(split_test_case[1])
+        try:
+            precondition.append(split_test_case[1])
+        except Exception:
+            precondition.append('error')
 
         # Test Case Steps 
-        test_steps.append(split_test_case[2])
+        try:
+            test_steps.append(split_test_case[2])
+        except Exception:
+            test_steps.append('error')
 
         # Test Case Expected Output
-        expected_result.append(split_test_case[3])
+        try:
+            expected_result.append(split_test_case[3])
+        except Exception:
+            expected_result.append('error')
 
         # Test Case Actual Result
         actual_result.append("Pass/Fail")

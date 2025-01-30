@@ -2,9 +2,12 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse
 from django.http import HttpResponseRedirect
 from django.shortcuts import render
+from django.http import JsonResponse
+import pandas as df
+import time # for checking runtime
 
 from .forms import URLForm
-from .utils import data_scrape, dataframe_init, create_table_dataset, load_model_chain, create_test_cases, csv_from_test_case_batches
+from .utils import data_scrape, create_table_dataset, create_test_cases
 
 # Create your views here
 def index(request):
@@ -39,6 +42,26 @@ def loading(request):
     # # HttpResponseRedirect('results')
     return render(request, "ngq_app/loading.html")
 
+def process_data(request):
+    DEBUG = 1
+
+    if (DEBUG == 0):
+        time.sleep(10)
+        request.session['test_cases'] = 0
+        
+    elif (DEBUG == 1):
+        start = time.time()
+        scraped_data = data_scrape(request.session['url']) 
+        end = time.time()
+        print(f"Scraping Finished In : {(end-start) * 10**3}, ms")
+
+        start = time.time()
+        request.session['llm_output'] = create_test_cases(scraped_data)
+        end = time.time()
+        print(f"Generation Finished In : {(end-start) * 10**3}, ms")
+
+    return JsonResponse({'status': 'completed'})
+
 def results(request):
     # Results Page Pseudocode
     # Receive data, if fail, show blank
@@ -48,4 +71,8 @@ def results(request):
     # Other Buttons
 
     # Load HTML
-    return render(request, "ngq_app/results.html")
+    # print(request.session['llm_output'])
+    request.session['test_cases'] = create_table_dataset(request.session['llm_output'])
+    request.session['test_cases'] = request.session['test_cases'].to_html()
+    test_cases = request.session['test_cases']
+    return render(request, "ngq_app/results.html", {"test_cases" : test_cases})
