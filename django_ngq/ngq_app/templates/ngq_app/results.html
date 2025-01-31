@@ -37,38 +37,7 @@
 
         <!-- Results Table -->
         <div class="table-container">
-            <!-- <table id="results-table">
-                <thead>
-                    <tr>
-                        <th>Test ID</th>
-                        <th>Objective</th>
-                        <th>Preconditions</th>
-                        <th>Test Steps</th>
-                        <th>Expected Result</th>
-                        <th>Actual Result</th>
-                    </tr>
-                    <tr>
-                        {% for col in test_cases.columns %}
-                        <td>
-                            {{col}}
-                        </td>
-                        {% endfor %}
-                    </tr>
-                </thead>
-                <tbody>
-                    {% for index, row in test_cases.iterrows %}
-                    <tr>
-                        {% for cell in row %}
-                        <td>
-                            {{cell}}
-                        </td>
-                        {% endfor %}
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table> -->
             {{test_cases|safe}}
-            
         </div>
     </main>
 

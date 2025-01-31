@@ -15,19 +15,14 @@
   - [x] development of dataset generator (fine-tuning) using prototype (V1)
 
 # Next TODOS (01-18-2025) (backend) (Updated: 01-28-2025)
-- [~] finishing setups of ngq_project, ngq_app, for easy component integration (django)
+- [x] finishing setups of ngq_project, ngq_app, for easy component integration (django)
   - [x] basic connections
-  - [~] saving form data and showing results
+  - [x] saving form data and showing results
     - Current Plan:
       - 1. Get Form Data from home.html (suggestion: change to index.html)
       - 2. Go to loading.html and process form data there
       - 3. Load results.html once form data is processed and transferred
-- [~] development (scraper, prompt generator, llm, table generator, backend) for system proper
-  - TODO Compilation:
-    - Scraper
-      - [~] Add Driver Checking (Checking what browser to use for scraping purposes)
-    - Prompt Generator
-      - [~] Experiment with prompts (datset generation)
+- [x] development (scraper, prompt generator, llm, table generator, backend) for system proper
       - [x] Adjust/Recode for system proper
     - Table Generator
       - [x] Code for developing the test case tables
@@ -36,4 +31,14 @@
 
 # Extra TODOS (Updated: 01-28-2025)
 - [ ] Hugging Face Implementation Version of using Llama 3.1 8b
+
+# Next TODOS (01-31-2025) (backend)
 - [ ] Cycle 2 Development
+    - TODO Compilation:
+      - Scraper
+        - [ ] Add Driver Checking (Checking what browser to use for scraping purposes)
+      - Prompt Generator
+        - [ ] Experiment with prompts (datset generation)
+      - Views (Django)
+        - [ ] Home backend
+        - [ ] Results backend
