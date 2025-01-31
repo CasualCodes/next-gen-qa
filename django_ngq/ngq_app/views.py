@@ -48,8 +48,15 @@ def results(request):
     request.session['test_cases'] = request.session['test_cases'].to_html()
     test_cases = request.session['test_cases']
     
-    # Other Buttons
+    # Other Buttons / UI elements
     # TODO : For Cycle 2: - Download Button, Dynamic Display
+    # url / website
+    # url = request.session['url']
+    # timestamp
+    # from datetime import date
+    # timestamp = date.today()
+    # test_case_count
+    # test_case_count = len(request.session['llm_output'])
 
     # Load HTML. load dataframe to table widget
     return render(request, "ngq_app/results.html", {"test_cases" : test_cases})

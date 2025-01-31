@@ -37,8 +37,12 @@
     - TODO Compilation:
       - Scraper
         - [ ] Add Driver Checking (Checking what browser to use for scraping purposes)
+        - [ ] Polish Scraped Data formatting
       - Prompt Generator
-        - [ ] Experiment with prompts (datset generation)
-      - Views (Django)
-        - [ ] Home backend
-        - [ ] Results backend
+        - [ ] Experiment with prompts (datset generation) with peer review
+      - Backend-Frontend Connection (Django)
+        - [ ] script.js
+          - adapt current .js file so that all templates can use it
+          - the intention is to use django mainly for backend, and using js for things not done in django and for website aesthetic/dyamicness/etc.
+      - [ ] Fine-Tuning
+      - [ ] Evaluation Setups
