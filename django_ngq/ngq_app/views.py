@@ -51,12 +51,12 @@ def results(request):
     # Other Buttons / UI elements
     # TODO : For Cycle 2: - Download Button, Dynamic Display
     # url / website
-    # url = request.session['url']
+    url = request.session['url']
     # timestamp
-    # from datetime import date
-    # timestamp = date.today()
+    from datetime import date
+    timestamp = date.today()
     # test_case_count
-    # test_case_count = len(request.session['llm_output'])
+    test_case_count = len(request.session['llm_output'])
 
     # Load HTML. load dataframe to table widget
-    return render(request, "ngq_app/results.html", {"test_cases" : test_cases})
+    return render(request, "ngq_app/results.html", {"test_cases" : test_cases, "url" : url, "timestamp" : timestamp, "test_case_count" : test_case_count})
