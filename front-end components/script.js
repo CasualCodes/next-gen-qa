@@ -74,6 +74,11 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // click regenerate button
     document.getElementById("regenerate-btn").addEventListener("click", () => {
+        window.location.href = "loading.html";
+    });
+
+    // click new url button
+    document.getElementById("new-url-btn").addEventListener("click", () => {
         window.location.href = "home.html";
     });
 });
