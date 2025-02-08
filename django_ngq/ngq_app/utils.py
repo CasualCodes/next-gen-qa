@@ -110,7 +110,7 @@ import langchain
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 
-TEMPLATE_SETTING = 1
+TEMPLATE_SETTING = 0
 
 if (TEMPLATE_SETTING == 0):
     # Template for non fine tuned model
