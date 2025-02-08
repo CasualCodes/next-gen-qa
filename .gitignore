@@ -2,3 +2,4 @@
 *.csv
 __pycache__
 django_ngq/db.sqlite3
+fine_tuning/fine_tuning_cycles

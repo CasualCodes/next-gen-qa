@@ -4,25 +4,21 @@ body {
     padding: 0;
     font-family: Arial, sans-serif;
     background-color: white;
-    color: black;
+    color: #06151b;
 }
 
 /* navigation */
 nav {
     width: 100%;
     position: fixed;
-    background-color: /*#68aeae*/ white;
+    background:linear-gradient(90deg, #A5E9E1, #388186);
     padding: 10px 20px;
-    border-bottom: 1px solid #ccc;
 }
 nav .logo a{
     font-size: 24px;
     font-weight: bold;
     color: black;
     text-decoration: none; 
-}
-nav .logo a:hover {
-    color: /*#333*/ #68aeae;
 }
 
 /* hero */
@@ -33,11 +29,17 @@ nav .logo a:hover {
     justify-content: center;
     height: 100vh;
     text-align: center;
-    background-color: #68aeae;
+    background:linear-gradient(90deg, #A5E9E1, #388186);
+    
+    /*o #A5E9E1, #388186 /d #68aeae, #4f7c7c /n #52d7c7, #5cd65c /m #68aeae, #68ae68* /b #52d7c7, #48c985, #5cd65c */
 }
 .hero h1 {
     font-size: 46px;
     margin-bottom: 10px;
+    color: black;
+}
+.hero h2, .hero h3 {
+    color: black;
 }
 .hero p {
     font-size: 18px;
@@ -59,8 +61,8 @@ nav .logo a:hover {
 .hero button {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: black;
-    color: white;
+    background-color: #06151b;
+    color: #d1d1d1;
     border: none;
     border-radius: 5px;
     cursor: pointer;
@@ -68,14 +70,19 @@ nav .logo a:hover {
 input[type=submit] {
     padding: 10px 20px;
     font-size: 16px;
-    background-color: black;
-    color: white;
+    background-color: #06151b;
+    color: #d1d1d1;
     border: none;
     border-radius: 5px;
     cursor: pointer;
 }
 .hero button:hover {
-    background-color: #333;
+    background: #e8e8e8;
+    color: black;
+}
+input[type=submit]:hover {
+    background: #e8e8e8;
+    color: black;
 }
 
 /* features */
@@ -84,12 +91,12 @@ input[type=submit] {
     justify-content: center;
     align-items: center;
     gap: 200px;
-    padding: 50px 20px;
-    background-color: #f3f3f3;
+    padding: 60px 20px;
+    background: #f4f4f4;
     text-align: center;
 }
 .feature {
-    max-width: 300px;
+    max-width: 500px;
 }
 .feature h3 {
     font-size: 28px;
@@ -98,19 +105,20 @@ input[type=submit] {
     width: 100px;
     height: 100px;
     border-radius: 50%;
-    background-color: black;
-    color: white;
+    background-color: #68aeae;
+    color: black;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 20px;
-    font-size: 24px;
+    font-size: 50px;
 }
 
 /* about */
 .about {
-    padding: 50px 300px;
+    padding: 100px 300px;
     text-align: center;
+    background: #6fb5b4;
 }
 .about h2 {
     font-size: 26px;
@@ -123,34 +131,42 @@ input[type=submit] {
 
 /* FAQ */
 .faq {
-    padding: 50px 150px;
-    background-color: #f9f9f9;
+    padding: 50px 180px;
+    background-color: #f4f4f4;
     text-align: center;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 40px;
 }
 .faq h2 {
     text-align: center;
     margin-bottom: 30px;
+    grid-column: span 2;
 }
 .faq-item {
-    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    padding: 15px;
+    border-radius: 8px; 
 }
 .faq-item h4 {
     font-size: 18px;
-    margin-bottom: 5px;
+    margin: 5px 0px 10px 0px;
 }
 .faq-item p {
     font-size: 16px;
     margin: 0;
 }
-
-/* footer 
-footer {
-    text-align: center;
-    padding: 10px;
-    background-color: #eaeaea;
-    border-top: 1px solid #ccc;
-    font-size: 14px;
-}*/
+.faq-item a {
+    color: #06151b;
+    text-decoration: none;
+}
+.faq-item:hover {
+    border: 1px solid #4f7c7c;
+}
+.faq-item a:hover {
+    color: #06151b;
+    text-decoration: underline;
+}
 
 
 /*************************LOADING SCREEN*************************/
@@ -162,15 +178,15 @@ footer {
     justify-content: center;
     height: 100vh;
     text-align: center;
-    background-color: #68aeae;
-    color: white;
+    background: /*#5c9595*/ linear-gradient(90deg, #A5E9E1, #388186);
+    color: black;
 }
 
 .loading .spinner {
     width: 50px;
     height: 50px;
     border: 5px solid rgba(255, 255, 255, 0.3);
-    border-top: 5px solid white;
+    border-top: 5px solid black;
     border-radius: 50%;
     animation: spin 1s linear infinite;
     margin-bottom: 20px;
@@ -189,9 +205,9 @@ footer {
 /*************************RESULT SCREEN*************************/
 /* results table */
 main.results {
-    
+    /*background:linear-gradient(90deg, #A5E9E1, #388186);*/
     padding: 100px 20px;
-    min-height: calc(100vh - 140px); /* Adjust for footer height */
+    min-height: calc(100vh - 140px);
     display: flex;
     flex-direction: column;
     gap: 20px;
@@ -220,14 +236,15 @@ main.results {
 .buttons button {
     padding: 10px 15px;
     font-size: 16px;
-    background-color: black;
-    color: white;
-    border: none;
+    color: #06151b;
+    border: 1px solid #06151b;
+    background: white;
     border-radius: 5px;
     cursor: pointer;
 }
 .buttons button:hover {
-    background-color: #333;
+    background-color: #06151b;
+    color: white;
 }
 
 /* summary */
@@ -257,10 +274,43 @@ th {
 
 /* footer */
 footer {
-    margin-top: auto; /* Push footer to the bottom if content is short */
-    padding: 10px;
-    background-color: #eaeaea;
+    margin-top: auto; 
+    padding-bottom: 5px;
+    background: #388186;
     border-top: 1px solid #ccc;
     text-align: center;
     font-size: 14px;
+}
+
+/*tablet, mobile*/
+@media (max-width: 768px) {
+    .features {
+        flex-direction: column; 
+        gap: 60px;
+    }
+    .feature {
+        max-width: 100%;
+    }
+
+    .hero input {
+        width: 80%; 
+    }
+    .hero .input-container {
+        width: 50%;
+    }
+
+    .faq {
+        display: flex;
+        flex-direction: column;
+        padding: 10%;
+        gap: 30px;
+    }
+
+    .about {
+        padding: 10% 10%;
+    }
+
+    .header-row {
+        flex-direction: column;
+    }
 }
