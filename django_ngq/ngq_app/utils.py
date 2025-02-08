@@ -110,40 +110,48 @@ import langchain
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 
-# CONTEXT V1
-template = """Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+TEMPLATE_SETTING = 1
 
-### Instruction:
-Generate a test case for the following UI Element:
+if (TEMPLATE_SETTING == 0):
+    # Template for non fine tuned model
+    # CONTEXT V1
+    template = """
+    You are a quality assurance expert that generates functional test cases for websites. You take in a UI element and you generate a functional test case for usability.
 
-### Input:
-{question}
+    Some UI elements have a link attached to them and other properties.
+    ONLY output in the following format: 
+    "Objective"~"Preconditions"~"Test Steps"~"Expected Result"
+    DO NOT output any other text. DO NOT output 'Here are the test cases...'
 
-### Response: """
-# template = """
-# You are a quality assurance expert that generates functional test cases for websites. You take in a UI element and you generate a functional test case for usability.
+    Example Input:
+    Link Element: Home with URL : https://bicol-u.edu.ph/
+    Link Element: Academics with URL : https://bicol-u.edu.ph/#
+    Link Element 'Battle of New Orleans' With URL https://en.wikipedia.org/wiki/Battle_of_New_Orleans   
+    ...
 
-# Some UI elements have a link attached to them and other properties.
-# ONLY output in the following format: 
-# "Objective"~"Preconditions"~"Test Steps"~"Expected Result"
-# DO NOT output any other text. DO NOT output 'Here are the test cases...'
+    Example Output:
+    "Verify the functionality of the Link Element 'Home'"~"The user is on the webpage 'https://bicol-u.edu.ph/'"~"'1. User navigates to the webpage \'https://bicol-u.edu.ph/\'' '2. Click on Link Element \'Home\'' '3. Verify if the webpage opens in a new tab/window.'"~"Webpage 'https://bicol-u.edu.ph/' should open in a new tab/window."
+    "Verify the functionality of the Link Element 'Academics'"~"The user is on the webpage 'https://bicol-u.edu.ph/'"~"'1. User navigates to the webpage \'https://bicol-u.edu.ph/\'' '2. Click on Link Element \'Academics\'' '3. Verify if the link url changes to \'https://bicol-u.edu.ph/#\'' '4. Verify if a dropdown below \'Academics\' is visible'"~"A dropdown should show below 'Academics', but the webpage does not change"
+    "Verify the functionality of the Link Element 'Battle of New Orleans'"~"The user is on the webpage 'https://en.wikipedia.org/'"~"'1. User navigates to the webpage 'https://en.wikipedia.org/' '' '2. Click on Link Element 'Battle of New Orleans'' '3. Verify if the link url changes to 'https://en.wikipedia.org/wiki/Battle_of_New_Orleans' '4. Verify if the webpage opens in a new tab/window'"~"Webpage 'https://en.wikipedia.org/wiki/Battle_of_New_Orleans/' should open in a new tab/window."
+    ...
 
-# Example Input:
-# Link Element: Home with URL : https://bicol-u.edu.ph/
-# Link Element: Academics with URL : https://bicol-u.edu.ph/#
-# Link Element 'Battle of New Orleans' With URL https://en.wikipedia.org/wiki/Battle_of_New_Orleans   
-# ...
+    Here is the UI element : {question}
+    """
 
-# Example Output:
-# "Verify the functionality of the Link Element 'Home'"~"The user is on the webpage 'https://bicol-u.edu.ph/'"~"'1. User navigates to the webpage \'https://bicol-u.edu.ph/\'' '2. Click on Link Element \'Home\'' '3. Verify if the webpage opens in a new tab/window.'"~"Webpage 'https://bicol-u.edu.ph/' should open in a new tab/window."
-# "Verify the functionality of the Link Element 'Academics'"~"The user is on the webpage 'https://bicol-u.edu.ph/'"~"'1. User navigates to the webpage \'https://bicol-u.edu.ph/\'' '2. Click on Link Element \'Academics\'' '3. Verify if the link url changes to \'https://bicol-u.edu.ph/#\'' '4. Verify if a dropdown below \'Academics\' is visible'"~"A dropdown should show below 'Academics', but the webpage does not change"
-# "Verify the functionality of the Link Element 'Battle of New Orleans'"~"The user is on the webpage 'https://en.wikipedia.org/'"~"'1. User navigates to the webpage 'https://en.wikipedia.org/' '' '2. Click on Link Element 'Battle of New Orleans'' '3. Verify if the link url changes to 'https://en.wikipedia.org/wiki/Battle_of_New_Orleans' '4. Verify if the webpage opens in a new tab/window'"~"Webpage 'https://en.wikipedia.org/wiki/Battle_of_New_Orleans/' should open in a new tab/window."
-# ...
+    model_str = "llama3.1"
+elif (TEMPLATE_SETTING == 1):
+    # template and model for fine-tuned version
+    template = """Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
 
-# Here is the UI element : {question}
-# """
-model_str = "llama3.1testcase"
-# model_str = "llama3.1"
+    ### Instruction:
+    Generate a test case for the following UI Element:
+
+    ### Input:
+    {question}
+
+    ### Response: """
+
+    model_str = "llama3.1testcase"
 
 # Prompt Generator + LLM
 # Load Model Chain
