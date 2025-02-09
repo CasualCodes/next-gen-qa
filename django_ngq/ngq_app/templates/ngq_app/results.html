@@ -48,5 +48,21 @@
     </footer>
 
     <!-- <script src="{% static 'ngq_app/script.js'%}"></script> -->
+    <script>
+        // click download button
+        document.getElementById("download-btn").addEventListener("click", () => {
+            window.location.href = "/download";
+        });
+
+        // click regenerate button
+        document.getElementById("regenerate-btn").addEventListener("click", () => {
+            window.location.href = "/loading";
+        });
+
+        // click new url button
+        document.getElementById("new-url-btn").addEventListener("click", () => {
+            window.location.href = "/";
+        });
+    </script>
 </body>
 </html>

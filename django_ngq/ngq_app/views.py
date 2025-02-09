@@ -45,18 +45,20 @@ def process_data(request):
 def results(request):
     # Receive data, if fail, show blank
     request.session['test_cases'] = create_table_dataset(request.session['llm_output'])
-    request.session['test_cases'] = request.session['test_cases'].to_html()
+    request.session['test_cases'] = request.session['test_cases'].to_html(table_id="results-table", index=False)
     test_cases = request.session['test_cases']
     
     # Other Buttons / UI elements
-    # TODO : For Cycle 2: - Download Button, Dynamic Display
-    # url / website
     url = request.session['url']
-    # timestamp
     from datetime import date
     timestamp = date.today()
-    # test_case_count
     test_case_count = len(request.session['llm_output'])
 
     # Load HTML. load dataframe to table widget
     return render(request, "ngq_app/results.html", {"test_cases" : test_cases, "url" : url, "timestamp" : timestamp, "test_case_count" : test_case_count})
+
+def download(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="test_cases.csv"'
+    create_table_dataset(request.session['llm_output']).to_csv(encoding='utf-8', index=False, header=True, path_or_buf=response)
+    return response
