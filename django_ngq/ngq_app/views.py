@@ -60,5 +60,5 @@ def results(request):
 def download(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="test_cases.csv"'
-    create_table_dataset(request.session['llm_output']).to_csv(encoding='utf-8', index=False, header=True, path_or_buf=response)
+    create_table_dataset(request.session['llm_output']).to_csv(index=False, header=True, path_or_buf=response)
     return response
