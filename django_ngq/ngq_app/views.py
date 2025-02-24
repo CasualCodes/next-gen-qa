@@ -36,7 +36,7 @@ def process_data(request):
     print(f"Scraping Finished In : {(end-start) * 10**3}, ms")
 
     start = time.time()
-    request.session['llm_output'] = create_test_cases(scraped_data)
+    request.session['llm_output'] = create_test_cases(data=scraped_data, url=request.session['url'])
     end = time.time()
     print(f"Generation Finished In : {(end-start) * 10**3}, ms")
 

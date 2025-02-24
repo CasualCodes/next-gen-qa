@@ -155,7 +155,7 @@ import langchain
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 
-TEMPLATE_SETTING = 0
+TEMPLATE_SETTING = 1
 
 if (TEMPLATE_SETTING == 0):
     # Template for non fine tuned model
@@ -188,27 +188,20 @@ if (TEMPLATE_SETTING == 0):
     model_str = "llama3.1"
 elif (TEMPLATE_SETTING == 1):
     # template and model for fine-tuned version
-    template = """Below is an instruction that describes a task, paired with an input that provides further context. Write a response that appropriately completes the request.
+    template = """{ui_element} from the website: {url}"""
+    model_str = "llamalora4"
 
-    ### Instruction:
-    Generate a test case for the following UI Element:
+# DEPRECATED : Common Errors To Delete
+common_error = ["Objective~Preconditions~Test Steps~Expected Result", "Objective~"]
+common_adjustment = ["Preconditions~", "Test Steps~", "Expected Result~"]
 
-    ### Input:
-    {question}
-
-    ### Response: """
-
-    model_str = "llama3.1testcase"
-
-common_error = "Objective~Preconditions~Test Steps~Expected Result"
-
-def load_model_chain(template : str =  template, model_str : str = "llama3.1", temperature=0.1):
+def load_model_chain(template : str =  template, model_str : str = model_str, temperature=0):
     prompt = ChatPromptTemplate.from_template(template)
     model = OllamaLLM(model=model_str, temperature=temperature)
     chain = prompt | model
     return chain
 
-def create_test_cases(data, model_str : str = "llama3.1" , template : str = template, url : str = "placeholder", common_error : str = common_error):
+def create_test_cases(data, model_str : str = model_str , template : str = template, url : str = "placeholder", common_error : str = common_error):
     
     # Load LLM Chain
     chain = load_model_chain(template, model_str)
@@ -219,7 +212,13 @@ def create_test_cases(data, model_str : str = "llama3.1" , template : str = temp
     i = 0
     total = len(data)
     for item in data:
-        return_data.append(chain.invoke({"ui_element": str(item), "url": url}).replace(common_error, ""))
+        test_case = chain.invoke({"ui_element": str(item), "url": url})
+        ## DEPRECATED for loops: for error checking
+        # for error in common_error:
+        #     test_case = test_case.replace(error, "")
+        # for adjustment in common_adjustment:
+        #     test_case = test_case.replace(adjustment, "~")
+        return_data.append(test_case)
         # LLM Reset To Free Up Context
         chain = load_model_chain(template, model_str)
         print(f"test case {i} out of {total} generated")

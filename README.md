@@ -30,19 +30,46 @@
       - Add Loop and List Methods for easier scraping and generation for a list of URLs
 
 # Extra TODOS (Updated: 01-28-2025)
-- [ ] Hugging Face Implementation Version of using Llama 3.1 8b
+- [-] Hugging Face Implementation Version of using Llama 3.1 8b
 
-# Next TODOS (01-31-2025) (backend)
-- [ ] Cycle 2 Development
+# Next TODOS (01-31-2025) (backend) (Updated: 02-14-2025)
+- [x] Cycle 2 Development
     - TODO Compilation:
       - Scraper
-        - [ ] Add Driver Checking (Checking what browser to use for scraping purposes)
-        - [ ] Polish Scraped Data formatting
+        - [x] Add Driver Checking (Checking what browser to use for scraping purposes)
+        - [x] Polish Scraped Data formatting
       - Prompt Generator
-        - [ ] Experiment with prompts (datset generation) with peer review
+        - [x] Experiment with prompts (datset generation) with peer review
       - Backend-Frontend Connection (Django)
-        - [ ] script.js
+        - [x] script.js
           - adapt current .js file so that all templates can use it
           - the intention is to use django mainly for backend, and using js for things not done in django and for website aesthetic/dyamicness/etc.
-      - [ ] Fine-Tuning
-      - [ ] Evaluation Setups
+      - [x] Fine-Tuning
+      - [x] Evaluation Setups
+
+# Next TODOS (02-24-2025) (backend) (Updated: 02-14-2025)
+  - [ ] Cycle 3 Development
+    - [ ] Prompt Generator
+      - [ ] Common Error Fixer / Validator Function
+      - [ ] Prompt Adjustments
+    - [ ] Table Generator
+      - [ ] Invalid Row Checker Function
+    - [ ] Dataset Generator
+      - [ ] Adjust Output, Input, Instruction Format
+      - [ ] Implement Subcomponent Changes
+      - [ ] Retroactive Adaptation Function (Convert old dataset to proper format)
+    - [ ] LLM Fine-Tuning
+      - [ ] Adjustments/Improvements from previous cycle
+        - Only save LORA
+        - Trial and Error of Modelfiles and Prompts
+          - Input seems to be the CONTEXT, aka the PROMPT CONTEXT. if i use that, then it will actually be appropriate. AAAAAAAAAAAAAAAAAAAAA
+          - Use that modelfile template suggestion. it works.
+        - [ ] Separate Notebooks
+      - [ ] Evaluation Tests
+        - [ ] SelfcheckGPT
+          - [ ] Data prep fixing
+          - [ ] Use different LLM?
+          - Decide whether to redelegate this to Human Evaluation
+        - [ ] Human Evaluation
+    - [ ] Frontend
+      - [ ] Test case counter integration to loading screen
