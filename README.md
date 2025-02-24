@@ -49,22 +49,22 @@
 
 # Next TODOS (02-24-2025) (backend) (Updated: 02-14-2025)
   - [ ] Cycle 3 Development
-    - [ ] Prompt Generator
-      - [ ] Common Error Fixer / Validator Function
-      - [ ] Prompt Adjustments
-    - [ ] Table Generator
-      - [ ] Invalid Row Checker Function
+    - [x] Prompt Generator
+      - [x] Common Error Fixer / Validator Function
+      - [#] Prompt Adjustments
+    - [x] Table Generator
+      - [x] Invalid Row Checker Function
     - [ ] Dataset Generator
-      - [ ] Adjust Output, Input, Instruction Format
+      - [x] Adjust Output, Input, Instruction Format
       - [ ] Implement Subcomponent Changes
-      - [ ] Retroactive Adaptation Function (Convert old dataset to proper format)
-    - [ ] LLM Fine-Tuning
-      - [ ] Adjustments/Improvements from previous cycle
+      - [x] Retroactive Adaptation Function (Convert old dataset to proper format)
+    - [x] LLM Fine-Tuning
+      - [x] Adjustments/Improvements from previous cycle
         - Only save LORA
         - Trial and Error of Modelfiles and Prompts
           - Input seems to be the CONTEXT, aka the PROMPT CONTEXT. if i use that, then it will actually be appropriate. AAAAAAAAAAAAAAAAAAAAA
           - Use that modelfile template suggestion. it works.
-        - [ ] Separate Notebooks
+        - [x] Separate Notebooks
       - [ ] Evaluation Tests
         - [ ] SelfcheckGPT
           - [ ] Data prep fixing
