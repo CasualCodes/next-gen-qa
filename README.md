@@ -48,7 +48,7 @@
       - [x] Evaluation Setups
 
 # Next TODOS (02-24-2025) (backend) (Updated: 02-26-2025)
-  - [ ] Cycle 3 Development
+  - [~] Cycle 3 Development
     - [x] Prompt Generator
       - [x] Common Error Fixer / Validator Function
       - [x] Prompt Adjustments
@@ -65,13 +65,26 @@
           - Input seems to be the CONTEXT, aka the PROMPT CONTEXT. if i use that, then it will actually be appropriate. AAAAAAAAAAAAAAAAAAAAA
           - Use that modelfile template suggestion. it works.
         - [x] Separate Notebooks
-      - [ ] Evaluation Tests
-        - [ ] SelfcheckGPT
-          - [ ] Data prep fixing
-          - [ ] Use different LLM?
-          - Decide whether to redelegate this to Human Evaluation
-        - [ ] Human Evaluation
-    - [ ] Frontend
-      - [ ] Test case counter integration to loading screen
-    - [ ] Deployment
+
+# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 02-26-2025)
+  - [ ] Cycle 3 Development (Frontend)
+    - Home Page Overhauls
+      - Separation of FAQ and About
+      - Color Design Changes
+    - [ ] Javascript file separation
+    - [ ] Results Page Overhauls
+      - [ ] Besides displaying number of test cases, display number of test cases per element
+      - [ ] Table Separation: Test Cases Generated PER element category
+      - [ ] Print Button
+      - [ ] Add Sub-IDs
+  - [ ] Cycle 4 Development (Backend)
+    - [?] Experimentation : Dynamic Loading-Results Screen
+    - [ ] Deployment 
       - [ ] Django : Security Setup / Keys
+    - [ ] Evaluation Tests
+      - [ ] SelfcheckGPT
+        - [ ] Data prep fixing
+        - [ ] Use different LLM?
+        - Decide whether to redelegate this to Human Evaluation
+      - [ ] Human Evaluation
+  
