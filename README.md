@@ -47,18 +47,18 @@
       - [x] Fine-Tuning
       - [x] Evaluation Setups
 
-# Next TODOS (02-24-2025) (backend) (Updated: 02-14-2025)
+# Next TODOS (02-24-2025) (backend) (Updated: 02-26-2025)
   - [ ] Cycle 3 Development
     - [x] Prompt Generator
       - [x] Common Error Fixer / Validator Function
-      - [#] Prompt Adjustments
+      - [x] Prompt Adjustments
     - [x] Table Generator
       - [x] Invalid Row Checker Function
-    - [ ] Dataset Generator
+    - [x] Dataset Generator
       - [x] Adjust Output, Input, Instruction Format
-      - [ ] Implement Subcomponent Changes
+      - [x] Implement Subcomponent Changes
       - [x] Retroactive Adaptation Function (Convert old dataset to proper format)
-    - [x] LLM Fine-Tuning
+    - [x] LLM Fine-Tuning (Cycle 2 Remnant Experiments)
       - [x] Adjustments/Improvements from previous cycle
         - Only save LORA
         - Trial and Error of Modelfiles and Prompts
