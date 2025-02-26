@@ -5,3 +5,4 @@ django_ngq/db.sqlite3
 fine_tuning/fine_tuning_cycles
 fine_tuning/cycle-1
 fine_tuning/cycle-2
+django_ngq/.env

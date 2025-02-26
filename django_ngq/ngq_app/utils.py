@@ -74,11 +74,8 @@ def data_scrape(url):
             link_download = f"A download is attached to document {link.get_attribute('download')}" if link.get_attribute('download') != None and link.get_attribute('download') != "" else ""
             
             # Store Link Element
-            store_navigation = f"{link_text} {link_url} {link_target}"
+            store_navigation = f"{link_text} {link_url} {link_target} {link_rel}"
             data.append(store_navigation)
-            if link_rel != "":
-                store_rel = f"{link_text} {link_rel}"
-                data.append(store_rel)
             if link_download != "":
                 store_download = f"{link_text} {link_download}"
                 data.append(store_download)
@@ -155,45 +152,63 @@ import langchain
 from langchain_ollama.llms import OllamaLLM
 from langchain_core.prompts import ChatPromptTemplate
 
-TEMPLATE_SETTING = 1
+TEMPLATE_SETTING = 0
+DEBUG_SETTING = 1
 
 if (TEMPLATE_SETTING == 0):
     # Template for non fine tuned model
-    # CONTEXT V2
-    template = """
-    You are an expert in software quality assurance specializing in usability testing. Given a UI element, generate a set of functional usability test cases with detailed test scenarios.
+    # CONTEXT V3
+    template = """You are an expert in software quality assurance specializing in usability testing.
 
-    The UI element could be a button, link, text, or input field (some elements have a link attached to them). Consider the attribute attached to the UI element as the attribute acts as a hint about the primary focus of the test case. Also consider the following usability aspects:
-
+    Consider the following usability aspects:
     Accessibility (keyboard navigation, screen reader support, etc.)
     Responsiveness (behavior across different screen sizes, etc.)
     Feedback (hover effects, click responses, error messages, etc.)
     Interactivity (expected behavior when clicked, typed into, or focused, etc.)
     User experience (clarity of labels, ease of use, etc.)
 
-    Only output the following, separated by a ~:
+    Avoid descriptions like "The user" or "The test participant" and should instead focus on direct, executable actions.
 
-    Objective (What the test aims to verify)
-    Preconditions (Any setup or conditions required before testing)
-    Test Steps (Step-by-step actions to perform the test)
-    Expected Result (Expected outcome if the UI element works correctly)
+    Given this UI Element: {ui_element}
+    From this website: {url}
 
-    Your output should only be in the following structured format but do not include the format in the output: "Objective"~"Preconditions"~"Test Steps"~"Expected Result"
-    DO NOT output anything else but one test case in the said format.
+    Generate a functional usability test case with the following aspects, separated by a `~`:
+    - **Objective**: Clearly state the objective of the test.
+    - **Preconditions**: List any preconditions that need to be met.
+    - **Test Steps**: Provide a step-by-step guide for the test. Each step should be a direct command, not a description.
+    - **Expected Output**: Describe the expected output.
 
-    Here is the UI Element: {ui_element}
-    The UI Element is from the following website URL : {url}
-    """
+    Output format example, start with the objective directly and avoid saying "here is the test case" or the name of the testcase and end the output after writing the expected output:
+    Objective: [Describe the objective] 
+    ~ Preconditions: [List preconditions, use dashes] 
+    ~ Test Steps: [Step-by-step guide] 
+    ~ Expected Output: [Describe the expected output, use dashes]"""
 
     model_str = "llama3.1"
 elif (TEMPLATE_SETTING == 1):
     # template and model for fine-tuned version
     template = """{ui_element} from the website: {url}"""
-    model_str = "llamalora4"
+    model_str = "qallama"
 
-# DEPRECATED : Common Errors To Delete
-common_error = ["Objective~Preconditions~Test Steps~Expected Result", "Objective~"]
-common_adjustment = ["Preconditions~", "Test Steps~", "Expected Result~"]
+# OPTIONAL FUNCTION COMMON ERROR REMOVAL/ADJUSTMENT
+def remove_common_error(output : str, setting : int = 0):
+    if (setting == 0 or setting == 2):
+        # Errors are strings that commonly appear as errors in the intended output
+        errors = ["Objective~Preconditions~Test Steps~Expected Result", 
+                "Objective:", "**Objective**:",
+                "Preconditions:", "**Preconditions**:",
+                "Test Steps:", "**Test Steps**:",
+                "Expected Output:", "**Expected Output**:",
+                "**** ", "****"
+                ]
+        for error in errors:
+            output = output.replace(error, "")
+    if (setting == 1 or setting == 2):
+        # Adjustments are strings that are not intended to be deleted, but instead adjusted
+        adjustments = ["Preconditions~", "Test Steps~", "Expected Result~"]
+        for adjustment in adjustments:
+            output = output.replace(adjustment, "~")
+    return output
 
 def load_model_chain(template : str =  template, model_str : str = model_str, temperature=0):
     prompt = ChatPromptTemplate.from_template(template)
@@ -201,7 +216,7 @@ def load_model_chain(template : str =  template, model_str : str = model_str, te
     chain = prompt | model
     return chain
 
-def create_test_cases(data, model_str : str = model_str , template : str = template, url : str = "placeholder", common_error : str = common_error):
+def create_test_cases(data, model_str : str = model_str , template : str = template, url : str = "placeholder"):
     
     # Load LLM Chain
     chain = load_model_chain(template, model_str)
@@ -213,15 +228,12 @@ def create_test_cases(data, model_str : str = model_str , template : str = templ
     total = len(data)
     for item in data:
         test_case = chain.invoke({"ui_element": str(item), "url": url})
-        ## DEPRECATED for loops: for error checking
-        # for error in common_error:
-        #     test_case = test_case.replace(error, "")
-        # for adjustment in common_adjustment:
-        #     test_case = test_case.replace(adjustment, "~")
+        test_case = remove_common_error(test_case)
         return_data.append(test_case)
         # LLM Reset To Free Up Context
         chain = load_model_chain(template, model_str)
-        print(f"test case {i} out of {total} generated")
+        if (DEBUG_SETTING == 1):
+            print(f"test case {i} out of {total} generated")
         i += 1
 
     return return_data
@@ -242,6 +254,7 @@ def csv_from_test_case_batches(filename, data):
 
 # System Proper Parameters
 def create_table_dataset(llm_output):
+
     id = []
     objective = []
     precondition = []
@@ -252,36 +265,22 @@ def create_table_dataset(llm_output):
     i = 0
     for test_case in llm_output:
         split_test_case = test_case.split('~')
-
-        # Test Case ID
-        id.append(i+1)
-
-        # Test Case Objective
-        try:
+        print(len(split_test_case))
+        
+        # Validate and skip if split is a failure
+        if len(split_test_case) == 4:
+            # Test Case ID
+            id.append(i+1)
+            # Test Case Objective
             objective.append(split_test_case[0])
-        except Exception:
-            objective.append('error')
-
-        # Test Case Precondition
-        try:
+            # Test Case Precondition
             precondition.append(split_test_case[1])
-        except Exception:
-            precondition.append('error')
-
-        # Test Case Steps 
-        try:
+            # Test Case Steps 
             test_steps.append(split_test_case[2])
-        except Exception:
-            test_steps.append('error')
-
-        # Test Case Expected Output
-        try:
+            # Test Case Expected Output
             expected_result.append(split_test_case[3])
-        except Exception:
-            expected_result.append('error')
-
-        # Test Case Actual Result
-        actual_result.append("Pass/Fail")
+            # Test Case Actual Result
+            actual_result.append("Pass/Fail")
 
         i+=1
 

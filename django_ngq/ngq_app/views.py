@@ -45,7 +45,7 @@ def process_data(request):
 def results(request):
     # Receive data, if fail, show blank
     request.session['test_cases'] = create_table_dataset(request.session['llm_output'])
-    request.session['test_cases'] = request.session['test_cases'].to_html(table_id="results-table", index=False)
+    request.session['test_cases'] = request.session['test_cases'].to_html(table_id="results-table", index=False).replace('\\n', '<br>')
     test_cases = request.session['test_cases']
     
     # Other Buttons / UI elements
