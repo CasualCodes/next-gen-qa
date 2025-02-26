@@ -73,3 +73,5 @@
         - [ ] Human Evaluation
     - [ ] Frontend
       - [ ] Test case counter integration to loading screen
+    - [ ] Deployment
+      - [ ] Django : Security Setup / Keys
