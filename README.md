@@ -66,21 +66,21 @@
           - Use that modelfile template suggestion. it works.
         - [x] Separate Notebooks
 
-# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 02-26-2025)
+# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 02-28-2025)
   - [ ] Cycle 3 Development (Frontend)
     - Home Page Overhauls
       - Separation of FAQ and About
       - Color Design Changes
-    - [ ] Javascript file separation
-    - [ ] Results Page Overhauls
-      - [ ] Besides displaying number of test cases, display number of test cases per element
-      - [ ] Table Separation: Test Cases Generated PER element category
-      - [ ] Print Button
-      - [ ] Add Sub-IDs
+    - [#Non-Urgent] Javascript file separation
+    - [#In-Progress:Planning-Designing] Results Page Overhauls
+      - [~] Besides displaying number of test cases, display number of test cases per element
+      - [~] Table Separation: Test Cases Generated PER element category
+      - [~] Print Button
+      - [~] Add Sub-IDs
   - [ ] Cycle 4 Development (Backend)
     - [?] Experimentation : Dynamic Loading-Results Screen
-    - [ ] Deployment 
-      - [ ] Django : Security Setup / Keys
+    - [#In-Progress] Deployment 
+      - [#In-Progress:Planning] Django : Security Setup / Keys
     - [ ] Evaluation Tests
       - [ ] SelfcheckGPT
         - [ ] Data prep fixing
