@@ -66,18 +66,38 @@
           - Use that modelfile template suggestion. it works.
         - [x] Separate Notebooks
 
-# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 03-01-2025)
+# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 03-02-2025)
   - [ ] Cycle 3 Development (Frontend)
     - Home Page Overhauls
       - Separation of FAQ and About
       - Color Design Changes
     - [#Non-Urgent] Javascript file separation
-    - [#In-Progress:Planning-Designing-Coding-Testing] Results Page Overhauls
-      - [#Coding-Testing] Besides **displaying** number of test cases, display number of test cases per element
-      - [#Coding-Testing] Table Separation: Test Cases Generated PER element category
-      - [#Planning-Designing] Print Button
+    - [ ] Results Page Overhauls
+      - Besides **displaying** number of test cases, display number of test cases per element
+      - Table Separation: Test Cases Generated PER element category
+      - Add Sub-IDs
+        Plan II:
+        - [ ] Scraper Component : Divide Data
+          - Input : URL
+          - Output : Data
+          - Data
+            - 0 : Scraped Data
+              - Buttons
+              - Etc.
+            - 1 : Elements
+              - Buttons
+              - Etc.
+        - [ ] Prompt Generator Component : Output Divided Data
+          - Input : Scraper_Output[0]
+          - Output : LLM_Output
+            - LLM_Output
+              - Buttons
+              - Etc.
+        - [ ] Table Generator Component : Overhauls
+          - [ ] Merger -> Merges all of the scraper component (0) scraped data
+          - [ ] Divide By Element -> Output as a Boolean of duplicates nonduplicates
+      - [ ] Print/Download Button
         - convert csv->html->pdf
-      - [#Coding-Testing] Add Sub-IDs
   - [ ] Cycle 4 Development (Backend)
     - [?] Experimentation : Dynamic Loading-Results Screen
     - [#In-Progress] Deployment 
