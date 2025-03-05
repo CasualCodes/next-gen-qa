@@ -26,7 +26,8 @@
         <div class="header-row">
             <p class="generated-count"><span id="test-case-count">{{test_case_count}}</span> Test Cases Generated</p>
             <div class="buttons">
-                <button id="download-btn">Download</button>
+                <button id="download-btn">Download CSV</button>
+                <!-- <button id="download-btn">Download PDF</button> -->
                 <button id="regenerate-btn">Regenerate</button>
                 <button id="new-url-btn">New URL</button>
             </div>
@@ -38,8 +39,13 @@
 
         <!-- Results Table -->
         <div class="table-container">
-            {{test_cases|safe}}
-        </div>
+            {% for table in test_cases %}
+            <div>
+                {{ table|safe }} 
+            </div>
+            {% endfor %}
+        </div>        
+
     </main>
 
     <!-- Footer -->
@@ -53,6 +59,11 @@
         document.getElementById("download-btn").addEventListener("click", () => {
             window.location.href = "/download";
         });
+
+        // // click download pdf button
+        // document.getElementById("download-pdf-btn").addEventListener("click", () => {
+        //     window.location.href = "/download_pdf";
+        // });
 
         // click regenerate button
         document.getElementById("regenerate-btn").addEventListener("click", () => {

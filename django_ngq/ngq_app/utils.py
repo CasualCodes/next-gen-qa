@@ -146,6 +146,63 @@ def data_scrape(url):
 
     return data
 
+# Divide Scraped Data
+def divide_scraped_data(scraped_data):
+    divided_scraped_data = []
+    
+    # Initiate titles
+    category_titles = [
+        "Button Element",
+        "Link Element",
+        "Heading Element",
+        "Paragraph Element",
+        "Form Submit Button Element",
+        "Input Field Element"
+    ]
+
+    # Inititate sublists
+    buttons = []
+    links = []
+    headers = []
+    paragraphs = []
+    form_submits = []
+    inputs = []
+
+    # Initiate mainlist
+    divided_scraped_data = [
+        buttons,
+        links,
+        headers,
+        paragraphs,
+        form_submits,
+        inputs
+    ]
+
+    i = 0
+    while (i < len(scraped_data)):
+        # Check through titles
+        for title in category_titles:
+            if (title in scraped_data[i]):
+                divided_scraped_data[category_titles.index(title)].append(scraped_data[i])
+                break
+        i+=1
+
+    return divided_scraped_data
+
+
+# For LLM Output
+def get_divide_indices(scraped_data):
+    divided_scraped_data = divide_scraped_data(scraped_data)
+    indices = []
+
+    i = 0
+    for data_type in divided_scraped_data:
+        indices.append(i)
+        for data in data_type:
+            i+=1
+
+    return indices
+
 ## Prompt Generator + LLM
 # Langchain and Ollama
 import langchain
@@ -253,7 +310,7 @@ def csv_from_test_case_batches(filename, data):
     cols.to_csv(f"{filename}.csv", sep='\t', encoding='utf-8', index=False, header=True)
 
 # System Proper Parameters
-def create_table_dataset(llm_output):
+def create_table_dataset(llm_output, ids : list, saved_index : int = 0):
 
     id = []
     objective = []
@@ -262,15 +319,14 @@ def create_table_dataset(llm_output):
     expected_result = []
     actual_result = []
 
-    i = 0
+    i = saved_index
     for test_case in llm_output:
         split_test_case = test_case.split('~')
-        print(len(split_test_case))
         
         # Validate and skip if split is a failure
-        if len(split_test_case) == 4:
+        if len(split_test_case) != 4:
             # Test Case ID
-            id.append(i+1)
+            id.append(ids[i])
             # Test Case Objective
             objective.append(split_test_case[0])
             # Test Case Precondition
@@ -293,3 +349,12 @@ def create_table_dataset(llm_output):
 
     return dataframe_init(data)
 
+def create_tables(divided_llm_output, ids, indices):
+    tables = []
+    i = 0
+
+    for llm_output in divided_llm_output:
+        tables.append(create_table_dataset(llm_output, ids, indices[i]))
+        i+=1
+
+    return tables
