@@ -1,3 +1,7 @@
+## UTILS.PY ##
+# - consists of the main components of the pipeline
+# Scraper -> Prompt Generator (+ LLM) -> Table Generator
+
 ## Scraper
 from selenium import webdriver
 
@@ -5,6 +9,7 @@ import selenium
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
+# Setup driver
 def setup_driver():
     try :
         options = webdriver.FirefoxOptions()
@@ -35,10 +40,14 @@ def setup_driver():
     
     return driver
 
+# Data Scraper: Returns list of scraped elements and test case ids for each element.
 def data_scrape(url):
     driver = setup_driver()
     data = []
+    ids = []
     driver.get(url)
+
+    i = 1
 
     # BUTTONS
     buttons = driver.find_elements(By.CSS_SELECTOR, "button")
@@ -51,15 +60,22 @@ def data_scrape(url):
             button_background_color = f"With Background Color Attribute {button.value_of_css_property("background-color")}" if button.value_of_css_property("background-color") != None else ""
             button_enabled = "Clickable" if button.is_enabled() else "Not Clickable"
             
+            j = 0
             # Store Button Element
             store_clickability = f"{button_enabled} {button_text}"
             data.append(store_clickability)
+            ids.append(f"{i}.{j}")
             if (button_color != "" or button_background_color != ""):
                 store_color = f"{button_text} {button_color} {button_background_color} "
                 data.append(store_color)
+                j+=1
+                ids.append(f"{i}.{j}")
             if (button_size != ""):
                 store_size = f"{button_text} {button_size}"
                 data.append(store_size)
+                j+=1
+                ids.append(f"{i}.{j}")
+            i+=1
 
     ## LINKS  
     links = driver.find_elements(By.TAG_NAME,"a")
@@ -73,12 +89,17 @@ def data_scrape(url):
             link_target = f"With target attribute {link.get_attribute('target')}" if link.get_attribute('target') != None and link.get_attribute('target') != "" else ""
             link_download = f"A download is attached to document {link.get_attribute('download')}" if link.get_attribute('download') != None and link.get_attribute('download') != "" else ""
             
+            j = 0
             # Store Link Element
             store_navigation = f"{link_text} {link_url} {link_target} {link_rel}"
             data.append(store_navigation)
+            ids.append(f"{i}.{j}")
             if link_download != "":
                 store_download = f"{link_text} {link_download}"
                 data.append(store_download)
+                j+=1
+                ids.append(f"{i}.{j}")
+            i+=1
 
     # TEXT
     # Heading Elements
@@ -91,10 +112,15 @@ def data_scrape(url):
                 text_background_color = f"With Background Color {heading.value_of_css_property("background-color")}" if heading.value_of_css_property("background-color") != None else ""
                 store = f"Heading Element (h{level}): '{heading.text}'"
                 
+                j = 0
                 # Store
                 data.append(store)
+                ids.append(f"{i}.{j}")
                 if (text_color != "" or text_background_color != ""):
                     data.append(f"{store} {text_color} {text_background_color}")
+                    j+=1
+                    ids.append(f"{i}.{j}")
+                i+=1
 
     # Paragraph Elements
     paragraphs = driver.find_elements(By.TAG_NAME,"p")
@@ -105,10 +131,15 @@ def data_scrape(url):
             text_background_color = f"With Background Color {paragraph.value_of_css_property("background-color")}" if paragraph.value_of_css_property("background-color") != None else ""
             store = f"Paragraph Element: '{paragraph.text}'"
 
+            j = 0
             # Store
             data.append(store)
+            ids.append(f"{i}.{j}")
             if (text_color != "" or text_background_color != ""):
-                    data.append(f"{store} {text_color} {text_background_color}")
+                data.append(f"{store} {text_color} {text_background_color}")
+                j+=1
+                ids.append(f"{i}.{j}")
+            i+=1
 
     # Input Elements
     input_tags = driver.find_elements(By.TAG_NAME,"input")
@@ -129,20 +160,39 @@ def data_scrape(url):
             if (input_tag.get_attribute('type') == "submit"):
                 store = f"Form Submit Button Element: {input_tag.get_attribute("name")} {input_field_disabled}"
                 data.append(store)
+                j = 0
+                ids.append(f"{i}.{j}")
             else:
                 store = f"{input_field_disabled} {input_field_name} {input_field_type} {input_field_required}"
                 data.append(store)
+                j = 0
+                ids.append(f"{i}.{j}")
+
                 store_value = f"{input_field_name} {input_field_type} {input_field_value}"
                 data.append(store_value)
+                j+=1
+                ids.append(f"{i}.{j}")
+
                 store_placeholder = f"{input_field_name} {input_field_type} {input_field_placeholder}"
                 data.append(store_placeholder)
+                j+=1
+                ids.append(f"{i}.{j}")
+
                 store_readonly = f"{input_field_name} {input_field_type} {input_field_readonly}"
                 data.append(store_readonly)
+                j+=1
+                ids.append(f"{i}.{j}")
+
                 store_autocomplete = f"{input_field_name} {input_field_type} {input_field_autocomplete}"
                 data.append(store_autocomplete)
+                j+=1
+                ids.append(f"{i}.{j}")
+            i+=1
             
     # Close the browser
     driver.quit()
+
+    data = [data, ids]
 
     return data
 
@@ -190,7 +240,7 @@ def divide_scraped_data(scraped_data):
     return divided_scraped_data
 
 
-# For LLM Output
+# Get divide indices based on scraped data for llm output division
 def get_divide_indices(scraped_data):
     divided_scraped_data = divide_scraped_data(scraped_data)
     indices = []
@@ -212,6 +262,7 @@ from langchain_core.prompts import ChatPromptTemplate
 TEMPLATE_SETTING = 0
 DEBUG_SETTING = 1
 
+# Template Setting. Detailed format for non-fine-tuned. Simplified format for fine-tuned.
 if (TEMPLATE_SETTING == 0):
     # Template for non fine tuned model
     # CONTEXT V3
@@ -247,7 +298,7 @@ elif (TEMPLATE_SETTING == 1):
     template = """{ui_element} from the website: {url}"""
     model_str = "qallama"
 
-# OPTIONAL FUNCTION COMMON ERROR REMOVAL/ADJUSTMENT
+# Remove common errors in format
 def remove_common_error(output : str, setting : int = 0):
     if (setting == 0 or setting == 2):
         # Errors are strings that commonly appear as errors in the intended output
@@ -267,12 +318,14 @@ def remove_common_error(output : str, setting : int = 0):
             output = output.replace(adjustment, "~")
     return output
 
+# Load LLM Model
 def load_model_chain(template : str =  template, model_str : str = model_str, temperature=0):
     prompt = ChatPromptTemplate.from_template(template)
     model = OllamaLLM(model=model_str, temperature=temperature)
     chain = prompt | model
     return chain
 
+# Create Test cases
 def create_test_cases(data, model_str : str = model_str , template : str = template, url : str = "placeholder"):
     
     # Load LLM Chain
@@ -286,6 +339,7 @@ def create_test_cases(data, model_str : str = model_str , template : str = templ
     for item in data:
         test_case = chain.invoke({"ui_element": str(item), "url": url})
         test_case = remove_common_error(test_case)
+        # OPTIONAL TODO : Add error checkers. Might be risky due to indices. So optional
         return_data.append(test_case)
         # LLM Reset To Free Up Context
         chain = load_model_chain(template, model_str)
@@ -294,6 +348,47 @@ def create_test_cases(data, model_str : str = model_str , template : str = templ
         i += 1
 
     return return_data
+
+# Divide LLM output by element types, based on scraped data indices
+def divide_llm_output(llm_output, indices):
+
+    # Inititate sublists
+    buttons = []
+    links = []
+    headers = []
+    paragraphs = []
+    form_submits = []
+    inputs = []
+
+    # Initiate mainlist
+    divided_data = [
+        buttons,
+        links,
+        headers,
+        paragraphs,
+        form_submits,
+        inputs
+    ]
+
+    i = 0
+    j = 0
+    n = 0
+    
+    index = 0
+    k = 0
+    while (index < len(indices)-1):
+        i = indices[index]
+        j = indices[index+1]
+        while (n >= i and n < j):
+            divided_data[k].append(llm_output[n])
+            n+=1
+        k += 1
+        index += 1
+    while (n<len(llm_output)):
+        divided_data[k].append(llm_output[n])
+        n+=1
+    
+    return divided_data
 
 ## Table Generator
 # Pandas
@@ -309,7 +404,7 @@ def csv_from_test_case_batches(filename, data):
     cols = dataframe_init(data)
     cols.to_csv(f"{filename}.csv", sep='\t', encoding='utf-8', index=False, header=True)
 
-# System Proper Parameters
+# Create table dataset
 def create_table_dataset(llm_output, ids : list, saved_index : int = 0):
 
     id = []
@@ -324,7 +419,7 @@ def create_table_dataset(llm_output, ids : list, saved_index : int = 0):
         split_test_case = test_case.split('~')
         
         # Validate and skip if split is a failure
-        if len(split_test_case) != 4:
+        if len(split_test_case) == 4:
             # Test Case ID
             id.append(ids[i])
             # Test Case Objective
@@ -349,6 +444,7 @@ def create_table_dataset(llm_output, ids : list, saved_index : int = 0):
 
     return dataframe_init(data)
 
+# Create multiple tables
 def create_tables(divided_llm_output, ids, indices):
     tables = []
     i = 0
@@ -358,3 +454,10 @@ def create_tables(divided_llm_output, ids, indices):
         i+=1
 
     return tables
+
+# Find common unaccepted filename chracters / url articles and delete them
+def clean_url(url : str):
+    articles = ['https', 'www', ':', '/', '\\', '*', '?', '<', '>', '|', '.']
+    for article in articles:
+        url = url.replace(article, '')
+    return url

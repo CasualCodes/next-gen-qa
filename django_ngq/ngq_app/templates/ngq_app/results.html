@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load index_filter %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -25,9 +25,12 @@
 
         <div class="header-row">
             <p class="generated-count"><span id="test-case-count">{{test_case_count}}</span> Test Cases Generated</p>
+            {% for category in categories %}
+                <p class="generated-count"><span id="test-case-count">{{category_count|index:forloop.counter0}}</span> from {{category}} elements</p>
+            {% endfor %}
             <div class="buttons">
                 <button id="download-btn">Download CSV</button>
-                <!-- <button id="download-btn">Download PDF</button> -->
+                <button id="download-pdf-btn">Print</button>
                 <button id="regenerate-btn">Regenerate</button>
                 <button id="new-url-btn">New URL</button>
             </div>
@@ -40,6 +43,7 @@
         <!-- Results Table -->
         <div class="table-container">
             {% for table in test_cases %}
+            <h3>{{categories|index:forloop.counter0}}</h3>
             <div>
                 {{ table|safe }} 
             </div>
@@ -60,10 +64,10 @@
             window.location.href = "/download";
         });
 
-        // // click download pdf button
-        // document.getElementById("download-pdf-btn").addEventListener("click", () => {
-        //     window.location.href = "/download_pdf";
-        // });
+        // click download pdf button
+        document.getElementById("download-pdf-btn").addEventListener("click", () => {
+            window.location.href = "/download_pdf";
+        });
 
         // click regenerate button
         document.getElementById("regenerate-btn").addEventListener("click", () => {

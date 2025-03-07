@@ -66,23 +66,23 @@
           - Use that modelfile template suggestion. it works.
         - [x] Separate Notebooks
 
-# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 03-05-2025)
-  - [~] Cycle 3 Development (Frontend)
+# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 03-07-2025)
+  - [x] Cycle 3 Development (Frontend)
     - Home Page Overhauls
       - Separation of FAQ and About
       - Color Design Changes
     - [#Non-Urgent] Javascript file separation
-    - [#Coding-Testing] Results Page Overhauls
+    - [x] Results Page Overhauls
     - Besides **displaying** number of test cases, display number of test cases per element
       Plan IV:
         [x] Planning
         [x] Design
-        [ ] Coding
-        [ ] Testing
-    - [#Design] Print/Download Button
+        [x] Coding
+        [x] Testing
+    - [x] Print/Download Button
         - convert csv->html->pdf
   - [ ] Cycle 4 Development (Backend)
-    - [?] Experimentation : Dynamic Loading-Results Screen
+    - [#Non-Urgent-Difficult] Experimentation : Dynamic Results Page
     - [#In-Progress] Deployment 
       - [x] Django : Security Setup / Keys
         - Remember to securely setup secret key when deploying to server

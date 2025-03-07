@@ -1,0 +1,199 @@
+{% load index_filter %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results - Next-Gen QA</title>
+    <style>
+        /*************************RESULT SCREEN*************************/
+        @page {
+            margin: 1in;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+            background-color: white;
+            color: #06151b;
+        }
+
+        p {
+            word-wrap: break-word;
+            white-space: normal;
+        }
+        
+        div {
+            overflow: auto;
+        }
+
+        body, p, li {
+            line-height: 1.5;
+        }
+
+        
+        /* results table */
+        main.results {
+            /*background:linear-gradient(90deg, #A5E9E1, #388186);*/
+            padding: 100px 20px;
+            min-height: calc(100vh - 140px);
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            page-break-inside: avoid;
+        }
+
+        /* info */
+        .info p {
+            margin: 0;
+            font-size: 16px;
+        }
+
+        /* header row */
+        .header-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .generated-count {
+            font-size: 18px;
+            font-weight: bold;
+        }
+        .buttons {
+            display: flex;
+            gap: 10px;
+        }
+        .buttons button {
+            padding: 10px 15px;
+            font-size: 16px;
+            color: #06151b;
+            border: 1px solid #06151b;
+            background: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .buttons button:hover {
+            background-color: #06151b;
+            color: white;
+        }
+
+        /* summary */
+        .summary {
+            font-size: 16px;
+            margin: 0;
+        }
+
+        /* table */
+        .table-container {
+            overflow-x: auto;
+            page-break-inside: avoid;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            table-layout: fixed; 
+            page-break-inside: avoid;
+        }
+        th, td {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            border: 1px solid #ddd;
+            padding: 10px;
+            height: auto;
+            text-align: left;
+            page-break-inside: avoid;
+            overflow: hidden; 
+            page-break-inside: avoid;
+        }
+        th {
+            background-color: #f4f4f4;
+            font-weight: bold;
+            page-break-inside: avoid;
+        }
+
+        /* footer */
+        footer {
+            margin-top: auto; 
+            padding-bottom: 5px;
+            background: #388186;
+            border-top: 1px solid #ccc;
+            text-align: center;
+            font-size: 14px;
+        }
+
+        /*tablet, mobile*/
+        @media (max-width: 768px) {
+            .features {
+                flex-direction: column; 
+                gap: 60px;
+            }
+            .feature {
+                max-width: 100%;
+            }
+
+            .hero input {
+                width: 80%; 
+            }
+            .hero .input-container {
+                width: 50%;
+            }
+
+            .faq {
+                display: flex;
+                flex-direction: column;
+                padding: 10%;
+                gap: 30px;
+            }
+
+            .about {
+                padding: 10% 10%;
+            }
+
+            .header-row {
+                flex-direction: column;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <a href="/">Next-Gen QA</a>
+        </div>
+    </nav>
+
+    <!-- Results Section -->
+    <main class="results">
+        <div class="info">
+            <p>Test case generated for: <span id="website-url">{{url}}</span></p>
+            <p>Timestamp: <span id="timestamp">{{timestamp}}</span></p>
+        </div>
+
+        <div class="header-row">
+            <p class="generated-count"><span id="test-case-count">{{test_case_count}}</span> Test Cases Generated</p>
+            {% for category in categories %}
+                <p class="generated-count"><span id="test-case-count">{{category_count|index:forloop.counter0}}</span> from {{category}} elements</p>
+            {% endfor %}
+        </div>
+
+        <!-- Results Table -->
+        <div class="table-container" >
+            {% for table in test_cases %}
+            <h3>{{categories|index:forloop.counter0}}</h3>
+            <div>
+                {{ table|safe }} 
+            </div>
+            {% endfor %}
+        </div>        
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Next-Gen QA. All rights reserved.</p>
+    </footer>
+</body>
+</html>
