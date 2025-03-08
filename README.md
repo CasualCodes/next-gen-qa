@@ -66,7 +66,7 @@
           - Use that modelfile template suggestion. it works.
         - [x] Separate Notebooks
 
-# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 03-07-2025)
+# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 03-08-2025)
   - [x] Cycle 3 Development (Frontend)
     - Home Page Overhauls
       - Separation of FAQ and About
@@ -87,7 +87,14 @@
       - [x] Django : Security Setup / Keys
         - Remember to securely setup secret key when deploying to server
       - [#] Git Clone To Server
-    - [ ] Evaluation Tests
+    - [~] Evaluation Tests
+      - [#Planning-Design-Coding] Multiple Tests and Outputs
+        - [#Planning-Design-Coding] List of lists of Test Parameters
+        - [#Planning-Design-Coding] For Loop Iteration
+          - [#Planning-Design-Coding] Train -> set parameters
+          - [#Planning-Design-Coding] Test -> get perplexity
+          - [#Planning-Design-Coding] Clean numbers for formatting (remove decimal places)
+          - [#Planning-Design-Coding] Download -> set folder filename to f"{train_parameters}-{training_loss}-{perplexity} model"
       - [ ] SelfcheckGPT
         - [ ] Data prep fixing
         - [ ] Use different LLM?
