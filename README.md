@@ -66,38 +66,45 @@
           - Use that modelfile template suggestion. it works.
         - [x] Separate Notebooks
 
-# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 03-08-2025)
+# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 03-10-2025)
   - [x] Cycle 3 Development (Frontend)
     - Home Page Overhauls
       - Separation of FAQ and About
       - Color Design Changes
     - [#Non-Urgent] Javascript file separation
-    - [x] Results Page Overhauls
-    - Besides **displaying** number of test cases, display number of test cases per element
-      Plan IV:
-        [x] Planning
-        [x] Design
-        [x] Coding
-        [x] Testing
+    - [x] Results Page Overhaulsg
     - [x] Print/Download Button
         - convert csv->html->pdf
   - [ ] Cycle 4 Development (Backend)
-    - [#Non-Urgent-Difficult] Experimentation : Dynamic Results Page
+    - [#Non-Urgent-Difficult#Planning] Experimentation : Dynamic Results Page
+      - Revamps Required:
+        - Scraper : Creates a List of Lists of Batches, of 5 ideally. Outputs List of List of Elements, and List of List of subids.
+        - **Prompt Generator+LLM** : Asynchronous - For Each Batch, Output a Batch of LLM Outputs
+        - Table Generator : Asynchronous (After Prompt Generator) - For Each Batch, update an existing table
+          - Update Existing table:
+            - Append All Elements
+            - Categorize According to Type
+        - Django Backend:
+          - Results Page with Loading Elements
+            - run main process loop, for each batch done, emit {batch-done} signal, if all batches done, emit {finished} signal
+            - for each {batch-done} run results-loading page render {PROBLEM: This reloads the init run script}
+            - if {finished}, no more reloading of results.
     - [#In-Progress] Deployment 
       - [x] Django : Security Setup / Keys
         - Remember to securely setup secret key when deploying to server
       - [#] Git Clone To Server
-    - [~] Evaluation Tests
-      - [#Planning-Design-Coding] Multiple Tests and Outputs
-        - [#Planning-Design-Coding] List of lists of Test Parameters
-        - [#Planning-Design-Coding] For Loop Iteration
-          - [#Planning-Design-Coding] Train -> set parameters
-          - [#Planning-Design-Coding] Test -> get perplexity
-          - [#Planning-Design-Coding] Clean numbers for formatting (remove decimal places)
-          - [#Planning-Design-Coding] Download -> set folder filename to f"{train_parameters}-{training_loss}-{perplexity} model"
-      - [ ] SelfcheckGPT
-        - [ ] Data prep fixing
-        - [ ] Use different LLM?
+    - [x] Evaluation Tests
+      - [x] Multiple Tests and Outputs
+        - [x] List of lists of Test Parameters
+        - [x] For Loop Iteration
+          - [x] Train -> set parameters
+          - [x] Test -> get perplexity
+          - [x] Clean numbers for formatting (remove decimal places)
+          - [x] Download -> set folder filename to f"{train_parameters}-{training_loss}-{perplexity} model"
+      - [x] SelfcheckGPT
+        - [x] Data prep fixing
+        - [x] Use different LLM?
         - Decide whether to redelegate this to Human Evaluation
+        - Can TRY to integrate, but we'll see in cycle 3
       - [ ] Human Evaluation
   
