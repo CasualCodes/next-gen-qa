@@ -66,7 +66,7 @@
           - Use that modelfile template suggestion. it works.
         - [x] Separate Notebooks
 
-# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 03-10-2025)
+# Post-Cycle2 Presentation TODOS (02-26-2025) (backend and frontend) (Updated: 03-12-2025)
   - [x] Cycle 3 Development (Frontend)
     - Home Page Overhauls
       - Separation of FAQ and About
@@ -79,7 +79,7 @@
     - [#Non-Urgent-Difficult#Planning] Experimentation : Dynamic Results Page
       - Revamps Required:
         - Scraper : Creates a List of Lists of Batches, of 5 ideally. Outputs List of List of Elements, and List of List of subids.
-        - **Prompt Generator+LLM** : Asynchronous - For Each Batch, Output a Batch of LLM Outputs
+        - [ ] **Prompt Generator+LLM** : Asynchronous - For Each Batch, Output a Batch of LLM Outputs
         - Table Generator : Asynchronous (After Prompt Generator) - For Each Batch, update an existing table
           - Update Existing table:
             - Append All Elements
