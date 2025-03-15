@@ -108,7 +108,7 @@
         - Can TRY to integrate, but we'll see in cycle 3
       - [#] Human Evaluation
 
-# RE: Cycle 3 Todos (Updated: 03-14-2025)
+# RE: Cycle 3 Todos (Updated: 03-15-2025)
 ## Section 1: Cleanup + Adding Credits
 - [ ] Cleanup + Etc. (Documentation, Basic Security Measure, Etc.)
   - [x] Prompt Generator + LLM
@@ -121,6 +121,9 @@
     - [x] Fine Tuning
   - [ ] Django App
     - [ ] Utils
+    - [ ] Urls
+    - [ ] Settings
+    - [ ] Views
     - [ ] Static : Javascript
     - [ ] Static : CSS
     - [ ] Templates : HTML Pages
@@ -144,18 +147,29 @@
 
 ## Section 2: Finetuning Model
 - [ ] The Final Run of CYCLE 3 FINETUNING EVALUATION
-  - [ ] Cycle 1 - 1000
-    - [ ] 1st Parameter Set (Training Loss: | Perplexity: )
-    - [ ] 2nd Parameter Set (Training Loss: | Perplexity: )
-  - [ ] Cycle 1 - 2000
-    - [ ] 1st Parameter Set (Training Loss: | Perplexity: )
-    - [ ] 2nd Parameter Set (Training Loss: | Perplexity: )
-  - [ ] Cycle 1 - 3000
-    - [ ] 1st Parameter Set (Training Loss: | Perplexity: )
-    - [ ] 2nd Parameter Set (Training Loss: | Perplexity: )
-  - [ ] Final Cycle - Max
-    - [ ] 1st Parameter Set (Training Loss: | Perplexity: )
-    - [ ] 2nd Parameter Set (Training Loss: | Perplexity: )
+  - [x] Cycle 1 - 1000
+    - [x] 1st Parameter Set (Training Loss: 0.008100 | Perplexity: 3.006251573562622)
+      - Does not infinitely generate when temperature == 0
+      - Format is not like the dataset, but close enough.
+        - Only 1 sentence precondition
+        - Sometimes 1 sentence expected result
+    - [x] 2nd Parameter Set (Training Loss: 0.008400 | Perplexity: Perplexity: 3.1807754039764404)
+      - Seems there is a risk of infinite generation
+      - Format is not like the dataset, but close enough
+      - 0.4 temp follows non fine tuned format
+  -  ABOVE MODELS DO NOT UNDERGO UNLIMITED GENERATION
+  - [x] Cycle 2 - 2000
+    - [x] 1st Parameter Set (Training Loss: 0.009500 | Perplexity: 3.095846652984619)
+      - Follows format more closely when temperature is not set to anything
+    - [x] 2nd Parameter Set (Training Loss: 0.008000 | Perplexity: 3.296351909637451)
+  - [x] Cycle 3 - 3000
+    - [x] 1st Parameter Set (Training Loss: 0.007800 | Perplexity: 3.3332083225250244)
+    - [x] 2nd Parameter Set (Training Loss: 0.008300 | Perplexity: 3.569732666015625)
+      - Modelfile Drastically changes output of resulting model
+  - [x] Final Cycle - Max
+    - [x] 1st Parameter Set (Training Loss: 0.008800 | Perplexity: 3.2280256748199463)
+    - [-FailedToSave] 2nd Parameter Set (Training Loss: 0.008900 | Perplexity: 3.518860101699829)
+- [ ] Optional : Empty Input Dataset Models
 
 ## Section 3.A [Requires Section 1 to be completed]: Deployment
 - [ ] Git Pull

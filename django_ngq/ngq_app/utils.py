@@ -1,15 +1,21 @@
+##############
 ## UTILS.PY ##
+##############
 # - consists of the main components of the pipeline
-# Scraper -> Prompt Generator (+ LLM) -> Table Generator
+# - Scraper -> Prompt Generator (+ LLM) -> Table Generator
 
-## Scraper
+#############
+## Scraper ##
+#############
+# ---------------------------------------------------------------------------------------------------
 from selenium import webdriver
 
 import selenium
 from selenium import webdriver
 from selenium.webdriver.common.by import By
 
-# Setup driver
+## Setup Driver: defaults to firefox, but uses chrome or edge if firefox is not installed
+# - Can be prone to error due to lack of exception testing on computers without firefox
 def setup_driver():
     try :
         options = webdriver.FirefoxOptions()
@@ -40,8 +46,13 @@ def setup_driver():
     
     return driver
 
-# Data Scraper: Returns list of scraped elements and test case ids for each element.
-def data_scrape(url):
+## Data Scrape: Creates a list ui elements through scraping with selenium. And a sub id list
+# - UI elements must be visible, if not, they are not scraped
+# - After each UI element scraped, a corresponding sub id is created to address duplicates in UI elements
+# - Duplicates in UI Elements exist as an attempt to make the LLM focus on the attributes present
+# Returns Data and Ids through a list of lists
+# Can Return Data Only Through a Boolean Argument
+def data_scrape(url, data_only : bool = False):
     driver = setup_driver()
     data = []
     ids = []
@@ -192,10 +203,12 @@ def data_scrape(url):
     # Close the browser
     driver.quit()
 
-    data = [data, ids]
+    if data_only == False:
+        data = [data, ids]
 
     return data
 
+## Element Division Functions 
 # Divide Scraped Data
 def divide_scraped_data(scraped_data):
     divided_scraped_data = []
@@ -238,11 +251,9 @@ def divide_scraped_data(scraped_data):
         i+=1
 
     return divided_scraped_data
-
-
-# Get divide indices based on scraped data for llm output division
-def get_divide_indices(scraped_data):
-    divided_scraped_data = divide_scraped_data(scraped_data)
+# Get Divide Incices
+def get_divide_indices(divided_scraped_data):
+    divided_scraped_data
     indices = []
 
     i = 0
@@ -252,106 +263,8 @@ def get_divide_indices(scraped_data):
             i+=1
 
     return indices
-
-## Prompt Generator + LLM
-# Langchain and Ollama
-import langchain
-from langchain_ollama.llms import OllamaLLM
-from langchain_core.prompts import ChatPromptTemplate
-
-TEMPLATE_SETTING = 0
-DEBUG_SETTING = 1
-
-# Template Setting. Detailed format for non-fine-tuned. Simplified format for fine-tuned.
-if (TEMPLATE_SETTING == 0):
-    # Template for non fine tuned model
-    # CONTEXT V3
-    template = """You are an expert in software quality assurance specializing in usability testing.
-
-    Consider the following usability aspects:
-    Accessibility (keyboard navigation, screen reader support, etc.)
-    Responsiveness (behavior across different screen sizes, etc.)
-    Feedback (hover effects, click responses, error messages, etc.)
-    Interactivity (expected behavior when clicked, typed into, or focused, etc.)
-    User experience (clarity of labels, ease of use, etc.)
-
-    Avoid descriptions like "The user" or "The test participant" and should instead focus on direct, executable actions.
-
-    Given this UI Element: {ui_element}
-    From this website: {url}
-
-    Generate a functional usability test case with the following aspects, separated by a `~`:
-    - **Objective**: Clearly state the objective of the test.
-    - **Preconditions**: List any preconditions that need to be met.
-    - **Test Steps**: Provide a step-by-step guide for the test. Each step should be a direct command, not a description.
-    - **Expected Output**: Describe the expected output.
-
-    Output format example, start with the objective directly and avoid saying "here is the test case" or the name of the testcase and end the output after writing the expected output:
-    Objective: [Describe the objective] 
-    ~ Preconditions: [List preconditions, use dashes] 
-    ~ Test Steps: [Step-by-step guide] 
-    ~ Expected Output: [Describe the expected output, use dashes]"""
-
-    model_str = "llama3.1"
-elif (TEMPLATE_SETTING == 1):
-    # template and model for fine-tuned version
-    template = """{ui_element} from the website: {url}"""
-    model_str = "qallama"
-
-# Remove common errors in format
-def remove_common_error(output : str, setting : int = 0):
-    if (setting == 0 or setting == 2):
-        # Errors are strings that commonly appear as errors in the intended output
-        errors = ["Objective~Preconditions~Test Steps~Expected Result", 
-                "Objective:", "**Objective**:",
-                "Preconditions:", "**Preconditions**:",
-                "Test Steps:", "**Test Steps**:",
-                "Expected Output:", "**Expected Output**:",
-                "**** ", "****"
-                ]
-        for error in errors:
-            output = output.replace(error, "")
-    if (setting == 1 or setting == 2):
-        # Adjustments are strings that are not intended to be deleted, but instead adjusted
-        adjustments = ["Preconditions~", "Test Steps~", "Expected Result~"]
-        for adjustment in adjustments:
-            output = output.replace(adjustment, "~")
-    return output
-
-# Load LLM Model
-def load_model_chain(template : str =  template, model_str : str = model_str, temperature=0):
-    prompt = ChatPromptTemplate.from_template(template)
-    model = OllamaLLM(model=model_str, temperature=temperature)
-    chain = prompt | model
-    return chain
-
-# Create Test cases
-def create_test_cases(data, model_str : str = model_str , template : str = template, url : str = "placeholder"):
-    
-    # Load LLM Chain
-    chain = load_model_chain(template, model_str)
-
-    # Return Data
-    return_data = []
-    
-    i = 0
-    total = len(data)
-    for item in data:
-        test_case = chain.invoke({"ui_element": str(item), "url": url})
-        test_case = remove_common_error(test_case)
-        # OPTIONAL TODO : Add error checkers. Might be risky due to indices. So optional
-        return_data.append(test_case)
-        # LLM Reset To Free Up Context
-        chain = load_model_chain(template, model_str)
-        if (DEBUG_SETTING == 1):
-            print(f"test case {i} out of {total} generated")
-        i += 1
-
-    return return_data
-
-# Divide LLM output by element types, based on scraped data indices
+# Divide the LLM Output
 def divide_llm_output(llm_output, indices):
-
     # Inititate sublists
     buttons = []
     links = []
@@ -389,22 +302,134 @@ def divide_llm_output(llm_output, indices):
         n+=1
     
     return divided_data
+# ---------------------------------------------------------------------------------------------------
+############################
+## PROMPT GENERATOR + LLM ##
+############################
+# ---------------------------------------------------------------------------------------------------
+## Prompt Generator + LLM
+# Langchain and Ollama
+import langchain
+from langchain_ollama.llms import OllamaLLM
+from langchain_core.prompts import ChatPromptTemplate
 
-## Table Generator
-# Pandas
+## Settings
+TEMPLATE_SETTING = 1
+DEBUG_SETTING = 1
+
+## Template for non-finetuned Llama 3.1 8B model. Very Consistent
+if (TEMPLATE_SETTING == 0):
+    template = """You are an expert in software quality assurance specializing in usability testing.
+
+    Consider the following usability aspects:
+    Accessibility (keyboard navigation, screen reader support, etc.)
+    Responsiveness (behavior across different screen sizes, etc.)
+    Feedback (hover effects, click responses, error messages, etc.)
+    Interactivity (expected behavior when clicked, typed into, or focused, etc.)
+    User experience (clarity of labels, ease of use, etc.)
+
+    Avoid descriptions like "The user" or "The test participant" and should instead focus on direct, executable actions.
+
+    Given this UI Element: {ui_element}
+    From this website: {url}
+
+    Generate a functional usability test case with the following aspects, separated by a `~`:
+    - **Objective**: Clearly state the objective of the test.
+    - **Preconditions**: List any preconditions that need to be met.
+    - **Test Steps**: Provide a step-by-step guide for the test. Each step should be a direct command, not a description.
+    - **Expected Output**: Describe the expected output.
+
+    Output format example, start with the objective directly and avoid saying "here is the test case" or the name of the testcase and end the output after writing the expected output:
+    Objective: [Describe the objective] 
+    ~ Preconditions: [List preconditions, use dashes] 
+    ~ Test Steps: [Step-by-step guide] 
+    ~ Expected Output: [Describe the expected output, use dashes]"""
+
+    model_str = "llama3.1"
+
+## Template for fine-tuned Llama 3.1 8B model. Can be very sensitive to the prompt
+# - Experimental
+elif (TEMPLATE_SETTING == 1):
+    # template and model for fine-tuned version
+    template = """Generate a functional usability test case for the following UI element: {ui_element} from the website: {url}"""
+    model_str = "qallama"
+
+## Common Error Removal Function: can be readjusted based on common errors of results
+def remove_common_error(output : str, setting : int = 0):
+    if (setting == 0 or setting == 2):
+        # Errors are strings that commonly appear as errors in the intended output
+        errors = ["Objective~Preconditions~Test Steps~Expected Result", 
+                "Objective:", "**Objective**:",
+                "Preconditions:", "**Preconditions**:",
+                "Test Steps:", "**Test Steps**:",
+                "Expected Output:", "**Expected Output**:",
+                "**** "
+                ]
+        for error in errors:
+            output = output.replace(error, "")
+    if (setting == 1 or setting == 2):
+        # Adjustments are strings that are not intended to be deleted, but instead adjusted
+        adjustments = ["Preconditions~", "Test Steps~", "Expected Result~"]
+        for adjustment in adjustments:
+            output = output.replace(adjustment, "~")
+    return output
+
+## Load/Reload Model
+def load_model_chain(template : str =  template, model_str : str = model_str, temperature=0):
+    prompt = ChatPromptTemplate.from_template(template)
+    # For Non-Fine Tuned
+    if TEMPLATE_SETTING == 0:
+        model = OllamaLLM(model=model_str, temperature=temperature)
+    else:
+        model = OllamaLLM(model=model_str)
+    chain = prompt | model
+    return chain
+
+def create_test_cases(data, model_str : str = model_str , template : str = template, url : str = "placeholder"):
+    
+    # Load LLM Chain
+    chain = load_model_chain(template, model_str)
+
+    # Return Data
+    return_data = []
+    
+    i = 0
+    total = len(data)
+    for item in data:
+        test_case = chain.invoke({"ui_element": str(item), "url": url})
+        test_case = remove_common_error(test_case)
+        # Note : There is no error checking unlike in table generation, to ensure that all scraped data have a test case generated
+        return_data.append(test_case)
+        # LLM Reset To Free Up Context
+        chain = load_model_chain(template, model_str)
+        if (DEBUG_SETTING == 1):
+            print(f"test case {i} out of {total} generated")
+        i += 1
+
+    return return_data
+# ---------------------------------------------------------------------------------------------------
+#####################
+## TABLE GENERATOR ##
+#####################
+# ---------------------------------------------------------------------------------------------------
 import pandas as pd
 
-# Table Dataframe Initialization
+## Table Dataframe Initialization
+# - Creates a Dataframe based on a dictionary
+# - Credits to finding this neat utility : 
 def dataframe_init(data):
     df = pd.DataFrame(dict([(key, pd.Series(value)) for key, value in data.items()]))
     return df
 
-# CSV Generator
+## CSV Generator
+# - Creates a CSV based on initialized dataframe
 def csv_from_test_case_batches(filename, data):
     cols = dataframe_init(data)
     cols.to_csv(f"{filename}.csv", sep='\t', encoding='utf-8', index=False, header=True)
 
-# Create table dataset
+## Create Table Dataset
+# - Creates a test case dataframe, ready to be turned into a table, turned to html for rendering, and for downloading as csv
+# - Saved index functions as a starting point for generating a set of tables with saved indices for division
 def create_table_dataset(llm_output, ids : list, saved_index : int = 0):
 
     id = []
@@ -419,7 +444,7 @@ def create_table_dataset(llm_output, ids : list, saved_index : int = 0):
         split_test_case = test_case.split('~')
         
         # Validate and skip if split is a failure
-        if len(split_test_case) == 4:
+        if len(split_test_case) != 4:
             # Test Case ID
             id.append(ids[i])
             # Test Case Objective
@@ -444,7 +469,8 @@ def create_table_dataset(llm_output, ids : list, saved_index : int = 0):
 
     return dataframe_init(data)
 
-# Create multiple tables
+## Create Tables:
+# - Creates multiple tables based on indices
 def create_tables(divided_llm_output, ids, indices):
     tables = []
     i = 0
@@ -454,6 +480,10 @@ def create_tables(divided_llm_output, ids, indices):
         i+=1
 
     return tables
+
+############
+## OTHERS ##
+############
 
 # Find common unaccepted filename chracters / url articles and delete them
 def clean_url(url : str):
