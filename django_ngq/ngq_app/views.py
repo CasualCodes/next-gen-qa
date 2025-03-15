@@ -11,7 +11,7 @@ import pdfkit
 from .forms import URLForm
 from .utils import data_scrape, create_table_dataset, create_test_cases, get_divide_indices, create_tables, divide_scraped_data, divide_llm_output, clean_url
 
-# Create your views here
+## INDEX PAGE ##
 def index(request):
     form = URLForm()
     # Index page pseudocode (Core function)
@@ -26,6 +26,7 @@ def index(request):
     # Load HTML
     return render(request, "ngq_app/home.html", {"form": form})
 
+## LOADING PAGE ##
 def loading(request):
     # Javascript in loading.html does the threading
     return render(request, "ngq_app/loading.html")
@@ -47,6 +48,7 @@ def process_data(request):
 
     return JsonResponse({'status': 'completed'})
 
+## RESULTS PAGE ##
 def results(request):
     # Divide LLM Output
     request.session['divided_llm_output'] = divide_llm_output(request.session['llm_output'], request.session['indices'])
@@ -95,6 +97,7 @@ def results(request):
                    "category_count" : category_count,
                    })
 
+## DOWNLOAD ##
 # Download CSV
 def download(request):
     filename = clean_url(request.session['url'])
@@ -102,7 +105,6 @@ def download(request):
     response['Content-Disposition'] = f'attachment; filename="{filename}.csv"'
     create_table_dataset(request.session['llm_output'], ids=request.session['ids']).to_csv(index=False, header=True, path_or_buf=response)
     return response
-
 # Download PDF (using pdfkit and wkhtmltopdf)
 def download_pdf(request):
     filename = clean_url(request.session['url'])

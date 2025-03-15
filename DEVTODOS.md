@@ -110,7 +110,7 @@
 
 # RE: Cycle 3 Todos (Updated: 03-15-2025)
 ## Section 1: Cleanup + Adding Credits
-- [ ] Cleanup + Etc. (Documentation, Basic Security Measure, Etc.)
+- [x] Cleanup + Etc. (Documentation, Basic Security Measure, Etc.)
   - [x] Prompt Generator + LLM
   - [x] Scraper
   - [x] Table Generator
@@ -119,15 +119,16 @@
   - [x] Fine Tuning Evaluation
     - [x] Evaluation
     - [x] Fine Tuning
-  - [~] Django App
+  - [x] Django App
     - [x] Utils
-    - [#] Urls
-    - [#] Settings
-    - [#] Views
-    - [ ] Static : Javascript
-    - [ ] Static : CSS
-    - [ ] Templates : HTML Pages
-    - [ ] TemplateTags : Index Filter
+    - [x] Urls
+    - [x] Settings
+    - [x] Views
+      - Further cleaning after decisions are 
+    - [x] Static : Javascript
+    - [x] Static : CSS
+    - [x] Templates : HTML Pages
+    - [x] TemplateTags : Index Filter
 - [ ] Adding Credits
   - [ ] Prompt Generator + LLM
   - [ ] Scraper
@@ -169,7 +170,21 @@
   - [x] Final Cycle - Max
     - [x] 1st Parameter Set (Training Loss: 0.008800 | Perplexity: 3.2280256748199463)
     - [-FailedToSave] 2nd Parameter Set (Training Loss: 0.008900 | Perplexity: 3.518860101699829)
-- [?] Optional : Empty Input Dataset Models
+- [-] Optional : Empty Input Dataset Models
+- [~] Additional : Optimization
+  - [x] Train Models
+    - [x] Something's Off
+      - 2_4_5_10_0.0002_3.1264_lora_model Training Loss 0.013600 
+      - 2_8_5_15_0.0001_3.1859_lora_model Training Loss 0.014200
+      - 2_4_5_15_0.0002_7.0222_lora_model Training Loss 0.016700
+      - 2_8_5_20_0.0001_6.5799_lora_model Training Loss 0.018900
+    - [ ] Testing Old Format
+      - <>   Training Loss 
+      - <>   Training Loss 
+      - <>   Training Loss 
+      - <>   Training Loss 
+  - [ ] Download Models
+  - [ ] Test Models
 
 ## Section 3.A [Requires Section 1 to be completed]: Deployment
 - [ ] Git Pull
