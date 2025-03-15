@@ -119,11 +119,11 @@
   - [x] Fine Tuning Evaluation
     - [x] Evaluation
     - [x] Fine Tuning
-  - [ ] Django App
-    - [ ] Utils
-    - [ ] Urls
-    - [ ] Settings
-    - [ ] Views
+  - [~] Django App
+    - [x] Utils
+    - [#] Urls
+    - [#] Settings
+    - [#] Views
     - [ ] Static : Javascript
     - [ ] Static : CSS
     - [ ] Templates : HTML Pages
@@ -146,7 +146,7 @@
 - [ ] Make Repository Public
 
 ## Section 2: Finetuning Model
-- [ ] The Final Run of CYCLE 3 FINETUNING EVALUATION
+- [x] The Final Run of CYCLE 3 FINETUNING EVALUATION
   - [x] Cycle 1 - 1000
     - [x] 1st Parameter Set (Training Loss: 0.008100 | Perplexity: 3.006251573562622)
       - Does not infinitely generate when temperature == 0
@@ -169,7 +169,7 @@
   - [x] Final Cycle - Max
     - [x] 1st Parameter Set (Training Loss: 0.008800 | Perplexity: 3.2280256748199463)
     - [-FailedToSave] 2nd Parameter Set (Training Loss: 0.008900 | Perplexity: 3.518860101699829)
-- [ ] Optional : Empty Input Dataset Models
+- [?] Optional : Empty Input Dataset Models
 
 ## Section 3.A [Requires Section 1 to be completed]: Deployment
 - [ ] Git Pull
