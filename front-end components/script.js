@@ -138,11 +138,12 @@ document.addEventListener("DOMContentLoaded", () => {
             createTableForElementType(type);
     
             while (testCases[type].length < count && batchCount < 3) {
-                const testId = `${type.toUpperCase()}-${testCases[type].length + 1}`;
+                const testId = `TC-${testIdCounter}`;
                 const testCase = createTestCase(type, testId);
                 testCases[type].push(testCase);
                 addTestCaseToTable(type, testCase);
                 generatedTestCases++;
+                testIdCounter++;
                 batchCount++;
             }
         });
