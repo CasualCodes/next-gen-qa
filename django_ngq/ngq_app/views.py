@@ -7,9 +7,14 @@ import pandas as df
 import time # for checking runtime
 from django.template.loader import render_to_string
 import pdfkit
-
 from .forms import URLForm
 from .utils import data_scrape, create_table_dataset, create_test_cases, get_divide_indices, create_tables, divide_scraped_data, divide_llm_output, clean_url
+
+## Code References
+# - Microsoft Copilot advice
+# - Django Documentation (Getting Started) : https://docs.djangoproject.com/en/5.1/intro/tutorial01/
+# - Django Documentation (Static Files) : https://docs.djangoproject.com/en/5.1/howto/static-files/
+# - Django Documentation (Request/Session) : https://docs.djangoproject.com/en/5.1/topics/http/sessions/
 
 ## INDEX PAGE ##
 def index(request):

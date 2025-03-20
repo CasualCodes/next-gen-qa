@@ -108,7 +108,7 @@
         - Can TRY to integrate, but we'll see in cycle 3
       - [#] Human Evaluation
 
-# RE: Cycle 3 Todos (Updated: 03-15-2025)
+# RE: Cycle 3 Todos (Updated: 03-20-2025)
 ## Section 1: Cleanup + Adding Credits
 - [x] Cleanup + Etc. (Documentation, Basic Security Measure, Etc.)
   - [x] Prompt Generator + LLM
@@ -130,23 +130,23 @@
     - [x] Templates : HTML Pages
     - [x] TemplateTags : Index Filter
 - [ ] Adding Credits
-  - [ ] Prompt Generator + LLM
-  - [ ] Scraper
-  - [ ] Table Generator
-  - [ ] Dataset Generator
-  - [ ] Dataset Correction
-  - [ ] Fine Tuning Evaluation
-    - [ ] Evaluation
-    - [ ] Fine Tuning
-  - [ ] Django App
-    - [ ] Utils
-    - [ ] Static : Javascript
-    - [ ] Static : CSS
-    - [ ] Templates : HTML Pages
-    - [ ] TemplateTags : Index Filter
+  - [x] Prompt Generator + LLM
+  - [x] Scraper
+  - [x] Table Generator
+  - [x] Dataset Generator
+  - [x] Dataset Correction
+  - [x] Fine Tuning Evaluation
+    - [x] Evaluation
+    - [x] Fine Tuning
+  - [x] Django App
+    - [x] Utils
+    - [x] Static : Javascript
+    - [x] Static : CSS
+    - [x] Templates : HTML Pages
+    - [x] TemplateTags : Index Filter
 - [ ] Make Repository Public
 
-## Section 2: Finetuning Model
+## Section 2: Finetuning Model [GONE WRONG]
 - [x] The Final Run of CYCLE 3 FINETUNING EVALUATION
   - [x] Cycle 1 - 1000
     - [x] 1st Parameter Set (Training Loss: 0.008100 | Perplexity: 3.006251573562622)
@@ -178,13 +178,46 @@
       - 2_8_5_15_0.0001_3.1859_lora_model Training Loss 0.014200
       - 2_4_5_15_0.0002_7.0222_lora_model Training Loss 0.016700
       - 2_8_5_20_0.0001_6.5799_lora_model Training Loss 0.018900
-    - [ ] Testing Old Format
+    - [-] Testing Old Format
       - <>   Training Loss 
       - <>   Training Loss 
       - <>   Training Loss 
       - <>   Training Loss 
-  - [ ] Download Models
-  - [ ] Test Models
+  - [-] Download Models
+  - [-] Test Model
+
+## Section 2.A Fine Tuning Model [Fixed]
+- [x] Finetuning properly
+- [x] Downloading Models
+- [x] Testing
+    - <applied-to-rest> requires extra stop parameters
+  - [x] 1000 with input
+    - [x] 30 epochs 1e-4 learning rate : does not follow test steps format
+    - [x] 20 epochs 2e-4 learning rate : does not follow test steps format 
+  - [x] 1000 without input
+    - [x] 30 epochs 1e-4 learning rate : does not follow format
+    - [x] 20 epochs 2e-4 learning rate : fails to place tilde, but follows format
+  - [x] 2000 with input
+    - [x] 30 1e-4 : does not follow format well 
+    - [x] abberant batch sizes, 20 2e-4 : overfitted, infinitely generates 
+  - [x] 2000 without input
+    - [x] 30 1e-4 : fails to follow format
+    - [x] 20 2e-4 : fails to place tilde, can use \n\n as separator instead
+  - [x] 3000 with input
+    - [x] 30 1e-4 : fails to follow test step format
+    - [x] 20 2e-4 : fails to follow test step format
+  - [x] 3000 without input
+    - [x] 30 1e-4 : does not follow format
+    - [x] 20 2e-4 : follows format perfectly 
+  - [x] Max with input
+    - [x] 30 1e-4 : does not follow test step format properly
+    - [x] 20 2e-4 : does not follow test step format properly
+  - [x] Max without input
+    - [x] 30 1e-4 : does not follow format
+    - [x] 20 1e-4 : follows format perfectly
+- [x] Practical Testing : Dataset Generator
+- [x] Conclusion
+  - Used 30 Epochs, 2e-4 Model with Detailed Modelfile Instructions
 
 ## Section 3.A [Requires Section 1 to be completed]: Deployment
 - [ ] Git Pull

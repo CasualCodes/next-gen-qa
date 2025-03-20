@@ -416,7 +416,6 @@ import pandas as pd
 
 ## Table Dataframe Initialization
 # - Creates a Dataframe based on a dictionary
-# - Credits to finding this neat utility : 
 def dataframe_init(data):
     df = pd.DataFrame(dict([(key, pd.Series(value)) for key, value in data.items()]))
     return df
