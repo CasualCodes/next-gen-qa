@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Results - Next-Gen QA</title>
     <link rel="stylesheet" href="styles.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
@@ -12,29 +13,48 @@
         <div class="logo">
             <a href="home.html">Next-Gen QA</a>
         </div>
+        <ul>
+            <li><a href="about.html">about</a></li>
+            <li><a href="faq.html">faq</a></li>
+        </ul>
     </nav>
 
     <!-- Results Section -->
     <main class="results">
-        <div class="info">
-            <p>Test case generated for: <span id="website-url">Loading...</span></p>
-            <p>Timestamp: <span id="timestamp">Loading...</span></p>
-        </div>
+        <div class="results-content">
+            <!-- Left column -->
+            <div class="info">
+                <p><strong>Test case generated for:</strong> <span id="test-url">Loading...</span></p>
+                <p><strong>Total Elements Identified:</strong> <span id="total-elements">Loading...</span></p>
+                <ul id="breakdown-list">
+                    <li>Buttons: <span id="buttons-count">Loading...</span></li>
+                    <li>Links: <span id="links-count">Loading...</span></li>
+                    <li>Inputs Fields: <span id="inputs-count">Loading...</span></li>
+                    <li>Paragraphs: <span id="paragraphs-count">Loading...</span></li>
+                </ul>
+            </div>
 
-        <div class="header-row">
-            <p class="generated-count"><span id="test-case-count">0</span> Test Cases Generated</p>
-            <div class="buttons">
-                <button id="download-btn">Download</button>
-                <button id="regenerate-btn">Regenerate</button>
-                <button id="new-url-btn">New URL</button>
+            <!-- Right column-->
+            <div class="test-case-summary">
+                <p class="generated-count">
+                    <span id="test-case-progress">0</span> / <span id="test-case-total">0</span>
+                </p>
+                <p id="generation-status">generating test cases...</p>
+                <div class="action-buttons">
+                    <button id="print-btn">Print</button>
+                    <button id="download-btn">Download</button>
+                    <button id="regenerate-btn">Regenerate</button>
+                    <button id="new-url-btn">New URL</button>
+                </div>
             </div>
         </div>
 
+        <!-- Summary
         <p class="summary">
             Our system analyzed your website and generated the following test cases, ensuring comprehensive coverage for your QA process.
-        </p>
-
-        <!-- Results Table -->
+        </p> -->
+        
+        <!-- Tables -->
         <div class="table-container">
             <table id="results-table">
                 <thead>
@@ -53,10 +73,11 @@
             </table>
         </div>
     </main>
+    
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2025 Next-Gen QA. All rights reserved.</p>
+        <p>&copy; 2024 Next-Gen QA | All Rights Reserved</p>
     </footer>
 
     <script src="script.js"></script>
