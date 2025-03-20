@@ -17,68 +17,186 @@ if (window.location.pathname.includes("home.html")) {
         sessionStorage.setItem("websiteURL", websiteURL);
       
         // simulate loading by redirecting to loading screen
-        window.location.href = "loading.html";
-    });
-}
-  
-
-////////// loading screen to results
-if (window.location.pathname.includes("loading.html")) {
-    // simulate a delay for loading (e.g., 2 seconds)
-    setTimeout(() => {
         window.location.href = "results.html";
-    }, 2000); // adjust delay as needed
+    });
 }
   
 
 ////////// results page
 document.addEventListener("DOMContentLoaded", () => {
-    const testCaseCount = Math.floor(Math.random() * 10) + 1; // simulate number of test cases (1-10)
-    const websiteUrl = sessionStorage.getItem("websiteURL") || "example.com";
-    const timestamp = new Date().toLocaleString();
+    const resultsContainer = document.querySelector(".table-container");
+    const progressTracker = document.getElementById("test-case-progress");
+    const totalTracker = document.getElementById("test-case-total");
+    const totalElementsDisplay = document.getElementById("total-elements");
+    const testUrlDisplay = document.getElementById("test-url");
+    const breakdownList = document.getElementById("breakdown-list");
 
-    // update page content dynamically
-    document.getElementById("website-url").textContent = websiteUrl;
-    document.getElementById("timestamp").textContent = timestamp;
-    document.getElementById("test-case-count").textContent = testCaseCount;
+    // retrieve URL 
+    const testUrl = sessionStorage.getItem("websiteURL") || "https://example.com";
+    testUrlDisplay.textContent = testUrl;
 
-    // simulate test case data
-    const resultsTable = document.getElementById("results-table").querySelector("tbody");
-    for (let i = 1; i <= testCaseCount; i++) {
-        const row = document.createElement("tr");
-        row.innerHTML = `
-        <td>${i}</td>
-        <td>Objective for test case ${i}</td>
-        <td>Precondition ${i}</td>
-        <td>Step 1: Action ${i}, Step 2: Action ${i}</td>
-        <td>Expected result ${i}</td>
-        <td>Actual result ${i}</td>
-        `;
-        resultsTable.appendChild(row);
+    // dummy elements
+    const elements = {
+        buttons: 3,
+        links: 4,
+        inputs: 2,
+        paragraphs: 5
+    };
+
+    // display breakdown dynamically
+    function updateBreakdownList() {
+        document.getElementById("buttons-count").textContent = elements.buttons;
+        document.getElementById("links-count").textContent = elements.links;
+        document.getElementById("inputs-count").textContent = elements.inputs;
+        document.getElementById("paragraphs-count").textContent = elements.paragraphs;
+    }
+    updateBreakdownList();
+
+    let testCases = {};
+    let generatedTestCases = 0;
+    const totalTestCases = Object.values(elements).reduce((sum, count) => sum + count, 0);
+
+    totalElementsDisplay.textContent = totalTestCases;
+    totalTracker.textContent = totalTestCases;
+
+    // create a table for each element type
+    function createTableForElementType(type) {
+        if (!testCases[type] && !document.getElementById(`table-${type}`)) {
+            testCases[type] = [];
+
+            const tableWrapper = document.createElement("div");
+            tableWrapper.classList.add("table-section");
+            tableWrapper.style.display = "none";
+
+            const title = document.createElement("h2");
+            title.textContent = `Test Cases for ${type.charAt(0).toUpperCase() + type.slice(1)}`;
+
+            const table = document.createElement("table");
+            table.id = `table-${type}`;
+            table.innerHTML = `
+                <thead>
+                    <tr>
+                        <th>Test ID</th>
+                        <th>Objective</th>
+                        <th>Preconditions</th>
+                        <th>Test Steps</th>
+                        <th>Expected Result</th>
+                        <th>Actual Result</th>
+                    </tr>
+                </thead>
+                <tbody></tbody>
+            `;
+
+            tableWrapper.appendChild(title);
+            tableWrapper.appendChild(table);
+            resultsContainer.appendChild(tableWrapper);
+        }
     }
 
-    // click download button
+    // add test case to correct table
+    function addTestCaseToTable(type, testCase) {
+        const tableBody = document.querySelector(`#table-${type} tbody`);
+        
+        const row = document.createElement("tr");
+        row.innerHTML = `
+            <td>${testCase.id}</td>
+            <td>${testCase.objective}</td>
+            <td>${testCase.precondition}</td>
+            <td>${testCase.steps}</td>
+            <td>${testCase.expected}</td>
+            <td>${testCase.actual}</td>
+        `;
+        tableBody.appendChild(row);
+    
+        document.getElementById(`table-${type}`).parentElement.style.display = "block"; // show table
+    }
+
+    // dummy test case
+    function createTestCase(type, testId) {
+        return {
+            id: testId,
+            objective: `Verify ${type} functionality`,
+            precondition: `Ensure ${type} exists`,
+            steps: `Click/Interact with ${type}`,
+            expected: `Expected behavior of ${type}`,
+            actual: `Actual behavior observed`
+        };
+    }
+
+    let testIdCounter = 1;
+    function generateTestCases() {
+        if (generatedTestCases >= totalTestCases) return;
+    
+        // remove html headers
+        if (generatedTestCases === 0) {
+            resultsContainer.innerHTML = ""; 
+        }
+    
+        let batchCount = 0;
+    
+        Object.entries(elements).forEach(([type, count]) => {
+            createTableForElementType(type);
+    
+            while (testCases[type].length < count && batchCount < 3) {
+                const testId = `${type.toUpperCase()}-${testCases[type].length + 1}`;
+                const testCase = createTestCase(type, testId);
+                testCases[type].push(testCase);
+                addTestCaseToTable(type, testCase);
+                generatedTestCases++;
+                batchCount++;
+            }
+        });
+    
+        updateProgress();
+    
+        if (generatedTestCases < totalTestCases) {
+            setTimeout(generateTestCases, 2000);
+        }
+    }
+
+    // update progress
+    function updateProgress() {
+        progressTracker.textContent = generatedTestCases;
+        document.getElementById("generation-status").textContent = 
+            generatedTestCases < totalTestCases ? "generating test cases..." : "test cases generated";
+    }
+
+    generateTestCases();
+
+    // event listeners
+    document.getElementById("print-btn").addEventListener("click", () => window.print());
+
     document.getElementById("download-btn").addEventListener("click", () => {
-        const rows = [...resultsTable.children];
-        const csvData = rows.map(row =>
-            [...row.children].map(cell => `"${cell.textContent}"`).join(",")
-        );
-        const csvContent = `data:text/csv;charset=utf-8,Test ID,Objective,Preconditions,Test Steps,Expected Result,Actual Result\n${csvData.join("\n")}`;
+        const csvContent = "Test ID,Objective,Preconditions,Test Steps,Expected Result,Actual Result\n" +
+            Object.values(testCases)
+                .flat()
+                .map(tc => `${tc.id},${tc.objective},${tc.precondition},${tc.steps},${tc.expected},${tc.actual}`)
+                .join("\n");
+
+        const blob = new Blob([csvContent], { type: "text/csv" });
         const link = document.createElement("a");
-        link.setAttribute("href", encodeURI(csvContent));
-        link.setAttribute("download", "test_cases.csv");
-        document.body.appendChild(link);
+        link.href = URL.createObjectURL(blob);
+        link.download = "test_cases.csv";
         link.click();
-        link.remove();
     });
 
-    // click regenerate button
     document.getElementById("regenerate-btn").addEventListener("click", () => {
-        window.location.href = "loading.html";
+        // reset test case data
+        testCases = {};
+        generatedTestCases = 0;
+        testIdCounter = 1;
+        
+        resultsContainer.innerHTML = "";
+    
+        // reset progress
+        progressTracker.textContent = "0";
+        document.getElementById("generation-status").textContent = "waiting to generate test cases...";
+    
+        // regenerate 
+        generateTestCases();
     });
 
-    // click new url button
     document.getElementById("new-url-btn").addEventListener("click", () => {
-        window.location.href = "home.html";
+        window.location.href = "home.html"; 
     });
 });
