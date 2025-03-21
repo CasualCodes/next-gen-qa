@@ -385,6 +385,9 @@ def load_model_chain(template : str =  template, model_str : str = model_str, te
     chain = prompt | model
     return chain
 
+# from celery import shared_task
+
+# @shared_task
 def create_test_cases(data, model_str : str = model_str , template : str = template, url : str = "placeholder"):
     
     # Load LLM Chain

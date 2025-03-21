@@ -102,6 +102,34 @@ def results(request):
                    "category_count" : category_count,
                    })
 
+# ! pip install django-channels
+# on settings.py : ASGI_APPLICATION = "myapp.asgi.application"
+## LOADING-RESULTS PAGE DRAFT ##
+def loading_results(request):
+    # Initialize LLM Output
+
+    # Get Scraped Data and Scraping Info
+    
+    # 
+
+    ## JS for retrieving table progress
+    # setInterval(() => {
+    # fetch('/get-progress/')  // Endpoint to retrieve session progress
+    #     .then(response => response.json())
+    #     .then(data => {
+    #         updateTable(data);  // Update your table dynamically
+    #     });
+    # }, 5000);
+    
+    ## For supporting JS with the Django Backend
+    # from django.http import JsonResponse
+
+    # def get_progress(request):
+    # progress_data = request.session.get('test_case_progress', [])
+    # return JsonResponse({'progress': progress_data})
+
+    pass
+
 ## DOWNLOAD ##
 # Download CSV
 def download(request):
