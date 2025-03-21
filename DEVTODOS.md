@@ -129,7 +129,7 @@
     - [x] Static : CSS
     - [x] Templates : HTML Pages
     - [x] TemplateTags : Index Filter
-- [ ] Adding Credits
+- [x] Adding Credits
   - [x] Prompt Generator + LLM
   - [x] Scraper
   - [x] Table Generator
@@ -146,7 +146,7 @@
     - [x] TemplateTags : Index Filter
 - [ ] Make Repository Public
 
-## Section 2: Finetuning Model [GONE WRONG]
+## Section 2: Finetuning Model
 - [x] The Final Run of CYCLE 3 FINETUNING EVALUATION
   - [x] Cycle 1 - 1000
     - [x] 1st Parameter Set (Training Loss: 0.008100 | Perplexity: 3.006251573562622)
