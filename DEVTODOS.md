@@ -108,7 +108,7 @@
         - Can TRY to integrate, but we'll see in cycle 3
       - [#] Human Evaluation
 
-# RE: Cycle 3 Todos (Updated: 03-20-2025)
+# RE: Cycle 3 Todos (Updated: 03-21-2025)
 ## Section 1: Cleanup + Adding Credits
 - [x] Cleanup + Etc. (Documentation, Basic Security Measure, Etc.)
   - [x] Prompt Generator + LLM
@@ -225,7 +225,7 @@
 - [ ] Run Server
 
 ## Section 3.B [Requires Section 1 to be completed]: Dynamic Results Page
-- [ ] Planning / Discussion
+- [-] Planning / Discussion
   - Prompt Generator+LLM : Asynchronous - For Each Batch, Output a Batch of LLM Outputs
   - Table Generator : Asynchronous (After Prompt Generator) - For Each Batch, update an existing table
     - Update Existing table:
@@ -236,6 +236,11 @@
       - run main process loop, for each batch done, emit {batch-done} signal, if all batches done, emit {finished} signal
       - for each {batch-done} run results-loading page render {PROBLEM: This reloads the init run script}
       - if {finished}, no more reloading of results.
+- [ ] PLAN A Branch : Little to No Dependencies
+  - Integrate render to the prompt generator loop
+  - Every after a test case is generated, render the page / update the page with AJAX
+- [ ] PLAN B Branch : All The Dependencies
+  - Use Celery and its dependencies to make an asynchronous function
 
 # Optional TODOS (Updated: 03-14-2025)
   - Prompt Generator + LLM : add time to generation to check time generated per test case
