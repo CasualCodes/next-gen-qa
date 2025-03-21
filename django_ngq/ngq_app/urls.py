@@ -9,5 +9,6 @@ urlpatterns = [
     path("process_data", views.process_data, name="process_data"),
     path("download", views.download, name="download"),
     path("download_pdf", views.download_pdf, name="download_pdf"),
+    path("process_results", views.process_results, name="process_results"),
     path("loading_results", views.loading_results, name="loading_results")
 ]

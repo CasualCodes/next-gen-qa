@@ -31,15 +31,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "ngq_app",
+    "channels",
+    "daphne",
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "ngq_app",
-    "channels",
-    "daphne",
 ]
 
 MIDDLEWARE = [
@@ -73,6 +73,12 @@ TEMPLATES = [
 WSGI_APPLICATION = "ngq_project.wsgi.application"
 
 ASGI_APPLICATION = "ngq_project.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases

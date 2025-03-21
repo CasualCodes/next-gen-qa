@@ -1,5 +1,5 @@
 {% load static %}
-
+{% load index_filter %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -16,45 +16,72 @@
         </div>
     </nav>
 
-    <!-- Loading Section -->
-    <section class="loading">
-        <div class="spinner"></div>
-        <p>Generating your test cases, please wait...</p>
-    </section>
+    <!-- Results Section -->
+    <main class="results">
+        <div class="info">
+            <p>Test cases being generated for: <span id="website-url">N/A</span></p>
+            <p>Timestamp: <span id="timestamp">N/A</span></p>
+        </div>
+
+        <div class="header-row">
+            <p class="generated-count"><span id="test-case-count">N/A</span> Test Cases Generated</p>
+        </div>
+
+        <p class="summary">
+            Our system analyzed your website and generated the following test cases, ensuring comprehensive coverage for your QA process.
+        </p>
+
+        <!-- Results Table -->
+        <div class="table-container">
+            <div id="dynamic-content"></div>
+        </div>        
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Next-Gen QA. All rights reserved.</p>
+    </footer>
 
     <!-- <script src="{% static 'ngq_app/script.js'%}"></script> -->
     <script>
+        // Setup Websocket
+        const socket = new WebSocket('ws://'+ window.location.host +'/ws/updates/');
+
+        socket.onopen = () => {
+            console.log("Connection Open")
+        }
+
+        socket.onmessage = function(event) {
+            // Parse the incoming JSON data
+            const context = JSON.parse(event.data);
+            console.log(context.test_cases_undivided)
+
+            // Dynamically update specific elements
+            document.getElementById('website-url').innerText = context.url;
+            document.getElementById('timestamp').innerText = context.timestamp;
+            document.getElementById('test-case-count').innerText = context.test_case_count;
+
+            // Update the page with the HTML snippet
+            document.getElementById('dynamic-content').innerHTML = context.test_cases_undivided;
+        };
+
+        window.onbeforeunload = function() {
+            socket.close(); // Closes the WebSocket connection
+        };
+
         function processResults() {
             fetch('/process_results')
                 .then(response => response.json())
                 .then(data => {
                     if (data.status === 'completed') {
+                        socket.close();
                         window.location.href = '/results';
                     }
                 });
         }
 
-        // <div>
-        //     <p>Status: <span id="status">Waiting...</span></p>
-        //     <p>Progress: <span id="progress">0%</span></p>
-        //     <div id="dynamic-content"></div> <!-- This will hold the dynamic HTML -->
-        // </div>
-
         window.onload = function() {
-            // Setup Websocket
-            const socket = new WebSocket('ws://yourserver/updates/');
-
-            socket.onmessage = function(event) {
-                // Parse the incoming JSON data
-                const context = JSON.parse(event.data);
-
-                // Dynamically update specific elements
-                document.getElementById('status').innerText = context.status;
-                document.getElementById('progress').innerText = context.progress;
-
-                // Update the page with the HTML snippet
-                document.getElementById('dynamic-content').innerHTML = context.html_snippet;
-            };
             processResults();
         };
     </script>

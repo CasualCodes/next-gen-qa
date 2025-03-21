@@ -293,12 +293,18 @@ def divide_llm_output(llm_output, indices):
         i = indices[index]
         j = indices[index+1]
         while (n >= i and n < j):
-            divided_data[k].append(llm_output[n])
+            try:
+                divided_data[k].append(llm_output[n])
+            except Exception:
+                pass
             n+=1
         k += 1
         index += 1
     while (n<len(llm_output)):
-        divided_data[k].append(llm_output[n])
+        try:
+            divided_data[k].append(llm_output[n])
+        except Exception:
+            pass
         n+=1
     
     return divided_data
@@ -371,8 +377,11 @@ def remove_common_error(output : str, setting : int = 0):
         for substring_error in substring_errors:
             # https://www.geeksforgeeks.org/find-the-index-of-a-substring-in-python/
             # To fix common generation error of fine-tuned model
-            index = output.index(substring_error)
-            output = output[:index]
+            try:
+                index = output.index(substring_error)
+                output = output[:index]
+            except Exception:
+                pass
     if (setting == 1 or setting == 2):
         # Adjustments are strings that are not intended to be deleted, but instead adjusted
         adjustments = ["Preconditions~", "Test Steps~", "Expected Result~"]
@@ -449,7 +458,7 @@ def create_table_dataset(llm_output, ids : list, saved_index : int = 0):
         split_test_case = test_case.split('~')
         
         # Validate and skip if split is a failure
-        if len(split_test_case) != 4:
+        if len(split_test_case) == 4:
             # Test Case ID
             id.append(ids[i])
             # Test Case Objective

@@ -33,8 +33,6 @@ def index(request):
 
 ## LOADING PAGE ##
 def loading(request):
-    # Reset Full Context
-    request.session['full_context'] = None
     # Javascript in loading.html does the threading
     return render(request, "ngq_app/loading.html")
 
@@ -53,6 +51,7 @@ def process_data(request):
 def update_context(request):
     # Divide LLM Output
     request.session['divided_llm_output'] = divide_llm_output(request.session['llm_output'], request.session['indices'])
+    request.session['undivided_llm_output'] = create_table_dataset(request.session['llm_output'], ids=request.session['ids']).to_html(table_id="results-table", index=False).replace('\\n', '<br>').replace('<thead>', '<tbody>')
 
     # Create HTML tables from dataframe
     categories = ["Button", "Link", "Header", "Paragraph", "Form Submit", "Input"]
@@ -73,13 +72,15 @@ def update_context(request):
 
     # Store Context for printing pdf
     # OPTIONAL TODO : Consider using this as context
-    request.session['full_context'] = {"test_cases" : request.session['tables'], 
-                   "url" : url, 
-                   "timestamp" : timestamp, 
-                   "test_case_count" : test_case_count, 
-                   "categories" : categories,
-                   "category_count" : category_count,
-                   }
+    request.session['full_context'] = {
+        "test_cases" : request.session['tables'], 
+        "test_cases_undivided" : request.session['undivided_llm_output'],
+        "url" : url, 
+        "timestamp" : timestamp, 
+        "test_case_count" : test_case_count, 
+        "categories" : categories,
+        "category_count" : category_count,
+        }
 
 ## LOADING RESULTS ##
 def loading_results(request):
@@ -99,18 +100,17 @@ def process_results(request):
     chain = load_model_chain(template, model_str)
 
     # Return Data
-    return_data = []
+    request.session['llm_output'] = []
     
     i = 0
     total = len(request.session['scraped_data'])
     for item in request.session['scraped_data']:
         test_case = chain.invoke({"ui_element": str(item), "url": request.session['url']})
         test_case = remove_common_error(test_case)
-        # Note : There is no error checking unlike in table generation, to ensure that all scraped data have a test case generated
-        return_data.append(test_case)
 
-        ## Update Output For Display
-        request.session['llm_output'] = return_data
+        print(test_case)
+        request.session['llm_output'].append(test_case)
+        print(request.session['llm_output'])
         update_context(request)                    
         async_to_sync(channel_layer.group_send)(
             group_name,
@@ -126,7 +126,7 @@ def process_results(request):
             print(f"test case {i} out of {total} generated")
         i += 1
 
-    return JsonResponse({"status": "finished"})
+    return JsonResponse({"status": "completed"})
 
 ## RESULTS PAGE ##
 def results(request):
