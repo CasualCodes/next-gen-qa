@@ -1,0 +1,63 @@
+{% load static %}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Loading - Next-Gen QA</title>
+    <link rel="stylesheet" href="{% static 'ngq_app/styles.css' %}">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <a href="/">Next-Gen QA</a>
+        </div>
+    </nav>
+
+    <!-- Loading Section -->
+    <section class="loading">
+        <div class="spinner"></div>
+        <p>Generating your test cases, please wait...</p>
+    </section>
+
+    <!-- <script src="{% static 'ngq_app/script.js'%}"></script> -->
+    <script>
+        function processResults() {
+            fetch('/process_results')
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'completed') {
+                        window.location.href = '/results';
+                    }
+                });
+        }
+
+        // <div>
+        //     <p>Status: <span id="status">Waiting...</span></p>
+        //     <p>Progress: <span id="progress">0%</span></p>
+        //     <div id="dynamic-content"></div> <!-- This will hold the dynamic HTML -->
+        // </div>
+
+        window.onload = function() {
+            // Setup Websocket
+            const socket = new WebSocket('ws://yourserver/updates/');
+
+            socket.onmessage = function(event) {
+                // Parse the incoming JSON data
+                const context = JSON.parse(event.data);
+
+                // Dynamically update specific elements
+                document.getElementById('status').innerText = context.status;
+                document.getElementById('progress').innerText = context.progress;
+
+                // Update the page with the HTML snippet
+                document.getElementById('dynamic-content').innerHTML = context.html_snippet;
+            };
+            processResults();
+        };
+    </script>
+    
+</body>
+</html>

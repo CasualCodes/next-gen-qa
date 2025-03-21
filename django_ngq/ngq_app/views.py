@@ -8,7 +8,7 @@ import time # for checking runtime
 from django.template.loader import render_to_string
 import pdfkit
 from .forms import URLForm
-from .utils import data_scrape, create_table_dataset, create_test_cases, get_divide_indices, create_tables, divide_scraped_data, divide_llm_output, clean_url
+from .utils import data_scrape, create_table_dataset, get_divide_indices, create_tables, divide_scraped_data, divide_llm_output, clean_url, remove_common_error, load_model_chain
 
 ## Code References
 # - Microsoft Copilot advice
@@ -33,10 +33,12 @@ def index(request):
 
 ## LOADING PAGE ##
 def loading(request):
+    # Reset Full Context
+    request.session['full_context'] = None
     # Javascript in loading.html does the threading
     return render(request, "ngq_app/loading.html")
 
-# Loaded by javascript asynchronously during loading screen
+## PROCESS DATA ##
 def process_data(request):
     start = time.time()
     request.session['scraped_dataset'] = data_scrape(request.session['url'])
@@ -45,16 +47,10 @@ def process_data(request):
     request.session['indices'] = get_divide_indices(request.session['scraped_data'])
     end = time.time()
     print(f"Scraping Finished In : {(end-start) * 10**3}, ms")
-
-    start = time.time()
-    request.session['llm_output'] = create_test_cases(data=request.session['scraped_data'], url=request.session['url'])
-    end = time.time()
-    print(f"Generation Finished In : {(end-start) * 10**3}, ms")
-
     return JsonResponse({'status': 'completed'})
 
-## RESULTS PAGE ##
-def results(request):
+## UPDATE CONTEXT ##
+def update_context(request):
     # Divide LLM Output
     request.session['divided_llm_output'] = divide_llm_output(request.session['llm_output'], request.session['indices'])
 
@@ -63,14 +59,7 @@ def results(request):
     request.session['tables'] = create_tables(request.session['divided_llm_output'], request.session['ids'], request.session['indices'])
     i = 0
     while i < len(request.session['tables']):
-        (request.session['tables'])[i] = (request.session['tables'])[i].to_html(table_id="results-table", index=False).replace('\\n', '<br>')
-        i+=1
-
-    # OPTIONAL TODO : Determine if this is suitable for website rendering too
-    request.session['no_header'] = create_tables(request.session['divided_llm_output'], request.session['ids'], request.session['indices'])
-    i = 0
-    while i < len(request.session['no_header']):
-        (request.session['no_header'])[i] = (request.session['no_header'])[i].to_html(table_id="results-table", index=False).replace('\\n', '<br>').replace('<thead>', '<tbody>')
+        (request.session['tables'])[i] = (request.session['tables'])[i].to_html(table_id="results-table", index=False).replace('\\n', '<br>').replace('<thead>', '<tbody>')
         i+=1
         
     # Other Buttons / UI elements
@@ -84,23 +73,65 @@ def results(request):
 
     # Store Context for printing pdf
     # OPTIONAL TODO : Consider using this as context
-    request.session['full_context'] = {"test_cases" : request.session['no_header'], 
+    request.session['full_context'] = {"test_cases" : request.session['tables'], 
                    "url" : url, 
                    "timestamp" : timestamp, 
                    "test_case_count" : test_case_count, 
                    "categories" : categories,
                    "category_count" : category_count,
-                    }
+                   }
 
-    # Load HTML. load dataframe to table widget
-    return render(request, "ngq_app/results.html", 
-                  {"test_cases" : request.session['tables'], 
-                   "url" : url, 
-                   "timestamp" : timestamp, 
-                   "test_case_count" : test_case_count, 
-                   "categories" : categories,
-                   "category_count" : category_count,
-                   })
+## LOADING RESULTS ##
+def loading_results(request):
+    return render(request, "ngq_app/loading_results.html")
+
+import time
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+
+def process_results(request):
+    ## Integrate Test Case Generation
+    channel_layer = get_channel_layer()
+    group_name = "updates"
+    from .utils import template, model_str, DEBUG_SETTING
+
+    # Load LLM Chain
+    chain = load_model_chain(template, model_str)
+
+    # Return Data
+    return_data = []
+    
+    i = 0
+    total = len(request.session['scraped_data'])
+    for item in request.session['scraped_data']:
+        test_case = chain.invoke({"ui_element": str(item), "url": request.session['url']})
+        test_case = remove_common_error(test_case)
+        # Note : There is no error checking unlike in table generation, to ensure that all scraped data have a test case generated
+        return_data.append(test_case)
+
+        ## Update Output For Display
+        request.session['llm_output'] = return_data
+        update_context(request)                    
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                "type": "update_message",
+                "context": request.session['full_context'],
+            }
+        )
+        
+        # LLM Reset To Free Up Context
+        chain = load_model_chain(template, model_str)
+        if (DEBUG_SETTING == 1):
+            print(f"test case {i} out of {total} generated")
+        i += 1
+
+    return JsonResponse({"status": "finished"})
+
+## RESULTS PAGE ##
+def results(request):
+    update_context(request)
+    return render(request, "ngq_app/results.html", request.session['full_context'])
 
 ## DOWNLOAD ##
 # Download CSV

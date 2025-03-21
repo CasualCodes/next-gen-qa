@@ -367,6 +367,12 @@ def remove_common_error(output : str, setting : int = 0):
                 ]
         for error in errors:
             output = output.replace(error, "")
+        substring_errors = ["\n\nThe"]
+        for substring_error in substring_errors:
+            # https://www.geeksforgeeks.org/find-the-index-of-a-substring-in-python/
+            # To fix common generation error of fine-tuned model
+            index = output.index(substring_error)
+            output = output[:index]
     if (setting == 1 or setting == 2):
         # Adjustments are strings that are not intended to be deleted, but instead adjusted
         adjustments = ["Preconditions~", "Test Steps~", "Expected Result~"]
