@@ -15,6 +15,17 @@ from .utils import data_scrape, create_table_dataset, get_divide_indices, create
 # - Django Documentation (Getting Started) : https://docs.djangoproject.com/en/5.1/intro/tutorial01/
 # - Django Documentation (Static Files) : https://docs.djangoproject.com/en/5.1/howto/static-files/
 # - Django Documentation (Request/Session) : https://docs.djangoproject.com/en/5.1/topics/http/sessions/
+# - Django Documentation (Async, Uvicorn) : 
+
+## OPTIONAL TODO: Preemptive precautions on fetched functions:
+# - IDEA: use requests.session variables to modify the JSON response. if the process is done, but the json response is not the expected one, then don't do anything
+# - - Use the same idea of fetching a function
+
+## OPTIONAL TODO: User Restrictions to avoid fatal async errors
+# - When GENERATING TEST CASES, disable entering of new URL
+# - MAIN PROBLEM: I can't do anything to stop the .invoke function run
+# - IDEA : Try to use the request.session variables to JSON response, and make the front end thread just move on after one of the checks.
+# - IDEA : When RUNNING, stop navigation
 
 ## INDEX PAGE ##
 def index(request):
@@ -38,6 +49,7 @@ def loading(request):
 
 ## PROCESS DATA ##
 def process_data(request):
+    json_response = JsonResponse({'status': 'completed'})
     start = time.time()
     request.session['scraped_dataset'] = data_scrape(request.session['url'])
     request.session['scraped_data'] = (request.session['scraped_dataset'])[0]
@@ -45,7 +57,7 @@ def process_data(request):
     request.session['indices'] = get_divide_indices(request.session['scraped_data'])
     end = time.time()
     print(f"Scraping Finished In : {(end-start) * 10**3}, ms")
-    return JsonResponse({'status': 'completed'})
+    return json_response
 
 ## UPDATE CONTEXT ##
 def update_context(request):
@@ -107,7 +119,7 @@ def process_results(request):
 
     # Return Data
     request.session['llm_output'] = []
-
+    # Prepare Json Response
     json_response = JsonResponse({"status": "completed"})
     
     i = 0
@@ -133,13 +145,14 @@ def process_results(request):
         # Update LLM_Output
         request.session['llm_output'].append(test_case)
         update_context(request)
+        # Experimental "okay_to_delete" function. Not Used
         async_to_sync(channel_layer.group_send)(
             group_name,
             {
                 "type": "okay_to_delete",
             }
         )
-
+        # Update Frontend
         async_to_sync(channel_layer.group_send)(
             group_name,
             {
