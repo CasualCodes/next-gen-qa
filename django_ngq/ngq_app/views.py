@@ -91,27 +91,55 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync
 
 def process_results(request):
-    ## Integrate Test Case Generation
-    channel_layer = get_channel_layer()
-    group_name = "updates"
-    from .utils import template, model_str, DEBUG_SETTING
 
+    ## Asynchronous Setup
+    from .consumers import cancel_flags
+    channel_layer = get_channel_layer()
+    session_id = request.session.session_key
+    print(f"Process_Results {session_id}")
+    cancel_flag = cancel_flags.get(session_id)
+    group_name = "updates"
+
+    ## Integrate Test Case Generation Code
+    from .utils import template, model_str, DEBUG_SETTING
     # Load LLM Chain
     chain = load_model_chain(template, model_str)
 
     # Return Data
     request.session['llm_output'] = []
+
+    json_response = JsonResponse({"status": "completed"})
     
     i = 0
     total = len(request.session['scraped_data'])
     for item in request.session['scraped_data']:
+        # First Check
+        print(cancel_flag.is_set())
+        if cancel_flag and cancel_flag.is_set():
+            print("Processing Scraped Data is Cancelled Safely")
+            json_response = JsonResponse({"status": "cancelled"})
+            break
+
         test_case = chain.invoke({"ui_element": str(item), "url": request.session['url']})
         test_case = remove_common_error(test_case)
 
-        print(test_case)
+        # Second Check
+        print(cancel_flag.is_set())
+        if cancel_flag and cancel_flag.is_set():
+            print("Processing Scraped Data is Cancelled Safely")
+            json_response = JsonResponse({"status": "cancelled"})
+            break
+
+        # Update LLM_Output
         request.session['llm_output'].append(test_case)
-        print(request.session['llm_output'])
-        update_context(request)                    
+        update_context(request)
+        async_to_sync(channel_layer.group_send)(
+            group_name,
+            {
+                "type": "okay_to_delete",
+            }
+        )
+
         async_to_sync(channel_layer.group_send)(
             group_name,
             {
@@ -119,14 +147,14 @@ def process_results(request):
                 "context": request.session['full_context'],
             }
         )
-        
+
         # LLM Reset To Free Up Context
         chain = load_model_chain(template, model_str)
         if (DEBUG_SETTING == 1):
             print(f"test case {i} out of {total} generated")
         i += 1
 
-    return JsonResponse({"status": "completed"})
+    return json_response
 
 ## RESULTS PAGE ##
 def results(request):

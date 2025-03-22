@@ -55,7 +55,6 @@
         socket.onmessage = function(event) {
             // Parse the incoming JSON data
             const context = JSON.parse(event.data);
-            console.log(context.test_cases_undivided)
 
             // Dynamically update specific elements
             document.getElementById('website-url').innerText = context.url;
@@ -67,19 +66,34 @@
         };
 
         window.onbeforeunload = function() {
-            socket.close(); // Closes the WebSocket connection
+            socket.close();
         };
 
-        function processResults() {
-            fetch('/process_results')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'completed') {
-                        socket.close();
-                        window.location.href = '/results';
-                    }
-                });
+        // function processResults() {
+        //     fetch('/process_results')
+        //         .then(response => response.json())
+        //         .then(data => {
+        //             if (data.status === 'completed') {
+        //                 window.location.href = '/results';
+        //             }
+        //         });
+        // }
+
+        async function processResults() {
+        try {
+            const response = await fetch('/process_results');
+            if (!response.ok) {
+                // Do Nothing
+            }
+            const data = await response.json();
+            if (data.status === 'completed') {
+                window.location.href = '/results';
+            }
+        } catch (error) {
+            // Do Nothing
         }
+    }
+
 
         window.onload = function() {
             processResults();

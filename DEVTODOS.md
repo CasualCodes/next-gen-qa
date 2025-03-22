@@ -236,10 +236,11 @@
       - run main process loop, for each batch done, emit {batch-done} signal, if all batches done, emit {finished} signal
       - for each {batch-done} run results-loading page render {PROBLEM: This reloads the init run script}
       - if {finished}, no more reloading of results.
-- [ ] **PLAN A Branch : Little to No Dependencies**
+- [x] **PLAN A Branch : Little to No Dependencies**
   - Integrate render to the prompt generator loop
   - Every after a test case is generated, render the page / update the page with AJAX
-- [ ] PLAN B Branch : All The Dependencies
+  - [ ] Polishing
+- [#] PLAN B Branch : All The Dependencies
   - Use Celery and its dependencies to make an asynchronous function
 
 # Optional TODOS (Updated: 03-14-2025)

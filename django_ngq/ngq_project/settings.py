@@ -33,7 +33,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     "ngq_app",
     "channels",
-    "daphne",
+    "daphne", # or python -m uvicorn ngq_project.asgi:application
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
