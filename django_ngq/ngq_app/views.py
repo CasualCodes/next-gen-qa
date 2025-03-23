@@ -17,14 +17,9 @@ from .utils import data_scrape, create_table_dataset, get_divide_indices, create
 # - Django Documentation (Request/Session) : https://docs.djangoproject.com/en/5.1/topics/http/sessions/
 # - Django Documentation (Async, Uvicorn) : 
 
-## OPTIONAL TODO: Preemptive precautions on fetched functions:
-# - IDEA: use requests.session variables to modify the JSON response. if the process is done, but the json response is not the expected one, then don't do anything
-# - - Use the same idea of fetching a function
-
 ## OPTIONAL TODO: User Restrictions to avoid fatal async errors
 # - When GENERATING TEST CASES, disable entering of new URL
 # - MAIN PROBLEM: I can't do anything to stop the .invoke function run
-# - IDEA : Try to use the request.session variables to JSON response, and make the front end thread just move on after one of the checks.
 # - IDEA : When RUNNING, stop navigation
 
 ## INDEX PAGE ##
@@ -126,7 +121,6 @@ def process_results(request):
     total = len(request.session['scraped_data'])
     for item in request.session['scraped_data']:
         # First Check
-        print(cancel_flag.is_set())
         if cancel_flag and cancel_flag.is_set():
             print("Processing Scraped Data is Cancelled Safely")
             json_response = JsonResponse({"status": "cancelled"})
@@ -136,7 +130,6 @@ def process_results(request):
         test_case = remove_common_error(test_case)
 
         # Second Check
-        print(cancel_flag.is_set())
         if cancel_flag and cancel_flag.is_set():
             print("Processing Scraped Data is Cancelled Safely")
             json_response = JsonResponse({"status": "cancelled"})

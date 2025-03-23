@@ -47,9 +47,10 @@
     <script>
         // Setup Websocket
         const socket = new WebSocket('ws://'+ window.location.host +'/ws/updates/');
+        const stop_fetch = new AbortController();
 
         socket.onopen = () => {
-            console.log("Connection Open")
+            console.log("Connection Open");
         }
 
         socket.onmessage = function(event) {
@@ -67,6 +68,7 @@
 
         window.onbeforeunload = function() {
             socket.close();
+            stop_fetch.abort();
         };
 
         // function processResults() {
@@ -80,19 +82,21 @@
         // }
 
         async function processResults() {
-        try {
-            const response = await fetch('/process_results');
-            if (!response.ok) {
-                // Do Nothing
+            try {
+                const response = await fetch('/process_results',{
+                    signal: stop_fetch.signal
+                });
+                if (!response.ok) {
+                    // Do Nothing
+                }
+                const data = await response.json();
+                if (data.status === 'completed') {
+                    window.location.href = '/results';
+                }
+            } catch (error) {
+                console.log("Closing page and its functions");
             }
-            const data = await response.json();
-            if (data.status === 'completed') {
-                window.location.href = '/results';
-            }
-        } catch (error) {
-            // Do Nothing
         }
-    }
 
 
         window.onload = function() {
