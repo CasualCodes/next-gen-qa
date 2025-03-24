@@ -136,7 +136,6 @@
     <main class="results">
         <div class="results-content">
             <!-- Left column -->
-            <!-- Loading... or {{}}-->
             <div class="info">
                 <p><strong>Test cases generated for:</strong> <span id="test-url">{{url}}</span></p>
                 <p><strong>Total Elements Identified:</strong> <span id="total-elements">{{ui_element_count}}</span></p>
@@ -178,7 +177,7 @@
             </div>
             {% endfor %} -->
         <div class="table-container">
-            {{dyanamic_test_cases|safe}}
+            {{test_cases_dynamic|safe}}
         </div>        
 
     </main>

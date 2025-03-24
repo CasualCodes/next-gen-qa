@@ -12,6 +12,7 @@ class UpdateConsumer(AsyncWebsocketConsumer):
         self.deletable = False
         # Setup
         self.group_name = "updates"
+        print("Connection Established")
         self.session_id = self.scope["session"].session_key
         print(f"Consumers {self.session_id}")
         cancel_flags[self.session_id] = threading.Event()
@@ -28,6 +29,7 @@ class UpdateConsumer(AsyncWebsocketConsumer):
         raise StopConsumer() 
 
     async def update_message(self, event):
+        print("Updating Frontend")
         context = event['context']  # The dict being passed
         # Send the dict as JSON
         await self.send(text_data=json.dumps(context))

@@ -26,11 +26,11 @@
         <div class="hero-content">
             <h1>Test Smarter, Not Harder</h1>
             <h2>Automate test case creation, so you can focus on testing.</h2>
-            <div class="input-container" method="post">
+            <form class="input-container" method="post">
                 {% csrf_token %}
                 {{ form }}
                 <input type="submit" id="generate-btn" value="Generate">
-            </div>
+            </form>
         </div>
 
         <div class="hero-image">

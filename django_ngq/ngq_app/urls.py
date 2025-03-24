@@ -12,5 +12,7 @@ urlpatterns = [
     path("process_results", views.process_results, name="process_results"),
     # path("loading_results", views.loading_results, name="loading_results"),
     path("about", views.about, name="about"),
-    path("faq", views.faq, name="faq")
+    path("faq", views.faq, name="faq"),
+    path("cancel_scraping", views.cancel_scraping, name="cancel_scraping"),
+    path("cancel_generation", views.cancel_generation, name="cancel_generation"),
 ]

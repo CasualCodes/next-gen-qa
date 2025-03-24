@@ -25,7 +25,7 @@
     <main class="results">
         <div class="results-content">
             <!-- Left column -->
-            <!-- Loading... or {{}}-->
+            <!-- Loading... or double curly brackets-->
             <div class="info">
                 <p><strong>Test cases generated for:</strong> <span id="test-url">Loading...</span></p>
                 <p><strong>Total Elements Identified:</strong> <span id="total-elements">Loading...</span></p>
@@ -66,7 +66,7 @@
                 {{ table|safe }} 
             </div>
             {% endfor %} -->
-        <div class="table-container"></div>        
+        <div id="table-container"></div>        
 
     </main>
 
@@ -124,26 +124,27 @@
         }
         // Generation : Dynamic Results
         const socket = new WebSocket('ws://'+ window.location.host +'/ws/updates/');
-        socket.onopen = () => {
-            console.log("Connection Opened");
-        }
-        socket.onmessage = function(event) {
-            // Parse the incoming JSON data
-            const context = JSON.parse(event.data);
+            socket.onopen = () => {
+                console.log("Connection Opened");
+            }
+            socket.onmessage = function(event) {
+                // Parse the incoming JSON data
+                const context = JSON.parse(event.data);
 
-            // Dynamically update statistics
-            document.getElementById('test-url').innerText = context.url;
-            document.getElementById('total-elements').innerText = context.elements_count;
-            document.getElementById('buttons-count').innerText = context.buttons_count;
-            document.getElementById('links-count').innerText = context.links_count;
-            document.getElementById('paragraphs-count').innerText = context.paragraphs_count;
-            document.getElementById('submit-fields-count').innerText = context.submit_fields_count;
-            document.getElementById('input-fields-count').innerText = context.input_fields_count;
-            document.getElementById('test-case-total').innerText = context.elements_count;
+                // Dynamically update statistics
+                document.getElementById('test-url').innerText = context.url;
+                document.getElementById('total-elements').innerText = context.elements_count;
+                document.getElementById('buttons-count').innerText = context.buttons_count;
+                document.getElementById('links-count').innerText = context.links_count;
+                document.getElementById('paragraphs-count').innerText = context.paragraphs_count;
+                document.getElementById('submit-fields-count').innerText = context.submit_fields_count;
+                document.getElementById('input-fields-count').innerText = context.input_fields_count;
+                document.getElementById('test-case-total').innerText = context.elements_count;
+                document.getElementById('test-case-progress').innerText = context.test_case_count;
 
-            // Dynamically update Table
-            document.getElementById('table-container').innerHTML = context.test_cases_dynamic;
-        };
+                // Dynamically update Table
+                document.getElementById('table-container').innerHTML = context.test_cases_dynamic;
+            };
         async function processResults() {
             try {
                 console.log("Generation Begins");
@@ -152,12 +153,13 @@
                 });
                 const data = await response.json();
                 if (data.status === 'completed') {
-                    document.getElementById('test-case-progress').innerText = "generation completed!"
+                    document.getElementById('generation-status').innerText = "generation completed!"
                 }
             } catch (error) {
+                socket.close();
                 console.log("Closing page and its functions");
                 const response = await fetch('/cancel_generation');
-
+                
                 const data = await response.json();
                 if (data.status === 'completed') {
                     console.log("Generation Cancelled");
@@ -178,13 +180,12 @@
             // Trigger All Stop Signals
             stop_fetch.abort();
 
-            // Socket Closing
-            try {
-                socket.close();
-                console.log("Connection Closed");
-            } catch (error) {
-                // Do Nothing
-            }
+            // // Socket Closing
+            // try {
+            //     console.log("Connection Closed");
+            // } catch (error) {
+            //     // Do Nothing
+            // }
         }
 
         // //// TAB IDENTIFICATION ////
