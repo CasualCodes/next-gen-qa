@@ -35,11 +35,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const testUrl = sessionStorage.getItem("websiteURL") || "https://example.com";
     testUrlDisplay.textContent = testUrl;
 
-    // dummy elements
+    // simulated elements
     const elements = {
         buttons: 3,
         links: 4,
-        inputs: 2,
+        inputFields: 2,
         paragraphs: 5
     };
 
@@ -47,8 +47,10 @@ document.addEventListener("DOMContentLoaded", () => {
     function updateBreakdownList() {
         document.getElementById("buttons-count").textContent = elements.buttons;
         document.getElementById("links-count").textContent = elements.links;
-        document.getElementById("inputs-count").textContent = elements.inputs;
+        document.getElementById("input-fields-count").textContent = elements.inputFields;
         document.getElementById("paragraphs-count").textContent = elements.paragraphs;
+
+        
     }
     updateBreakdownList();
 
@@ -69,8 +71,9 @@ document.addEventListener("DOMContentLoaded", () => {
             tableWrapper.style.display = "none";
 
             const title = document.createElement("h2");
-            title.textContent = `Test Cases for ${type.charAt(0).toUpperCase() + type.slice(1)}`;
-
+            const displayType = type === 'inputFields' ? 'Input Fields' : type.charAt(0).toUpperCase() + type.slice(1);
+            title.textContent = `${displayType}: ${elements[type]}`;
+            
             const table = document.createElement("table");
             table.id = `table-${type}`;
             table.innerHTML = `
@@ -108,7 +111,7 @@ document.addEventListener("DOMContentLoaded", () => {
         `;
         tableBody.appendChild(row);
     
-        document.getElementById(`table-${type}`).parentElement.style.display = "block"; // show table
+        document.getElementById(`table-${type}`).parentElement.style.display = "block"; // Show table
     }
 
     // dummy test case
@@ -123,11 +126,28 @@ document.addEventListener("DOMContentLoaded", () => {
         };
     }
 
+    
+    document.getElementById("generation-status").textContent = "waiting to generate test cases...";
+    progressTracker.textContent = "0"; 
+    if (generatedTestCases === 0) {
+        resultsContainer.innerHTML = ""; 
+    }
+    
+    // show 0/14 3 seconds before starting test generation bc long
+    setTimeout(() => {
+        document.getElementById("generation-status").textContent = "starting test case generation...";
+        
+        // after 3 seconds, begin generating test cases
+        setTimeout(() => {
+            generateTestCases();
+        }, 3000);
+    }, 100);
+
+
     let testIdCounter = 1;
     function generateTestCases() {
         if (generatedTestCases >= totalTestCases) return;
     
-        // remove html headers
         if (generatedTestCases === 0) {
             resultsContainer.innerHTML = ""; 
         }
@@ -162,7 +182,6 @@ document.addEventListener("DOMContentLoaded", () => {
             generatedTestCases < totalTestCases ? "generating test cases..." : "test cases generated";
     }
 
-    generateTestCases();
 
     // event listeners
     document.getElementById("print-btn").addEventListener("click", () => window.print());
@@ -182,18 +201,15 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     document.getElementById("regenerate-btn").addEventListener("click", () => {
-        // reset test case data
         testCases = {};
         generatedTestCases = 0;
         testIdCounter = 1;
         
         resultsContainer.innerHTML = "";
     
-        // reset progress
         progressTracker.textContent = "0";
         document.getElementById("generation-status").textContent = "waiting to generate test cases...";
     
-        // regenerate 
         generateTestCases();
     });
 
