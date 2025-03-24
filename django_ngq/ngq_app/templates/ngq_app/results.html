@@ -27,24 +27,24 @@
             <!-- Left column -->
             <!-- Loading... or {{}}-->
             <div class="info">
-                <p><strong>Test cases generated for:</strong> <span id="test-url">{{url}}</span></p>
-                <p><strong>Total Elements Identified:</strong> <span id="total-elements">{{ui_element_count}}</span></p>
+                <p><strong>Test cases generated for:</strong> <span id="test-url">Loading...</span></p>
+                <p><strong>Total Elements Identified:</strong> <span id="total-elements">Loading...</span></p>
                 <ul id="breakdown-list">
-                    <li>Buttons: <span id="buttons-count">{{categories.0}}</span></li>
-                    <li>Links: <span id="links-count">{{categories.1}}</span></li>
-                    <li>Paragraphs: <span id="paragraphs-count">{{categories.2}}</span></li>
-                    <li>Submit Fields: <span id="submit-fields-count">{{categories.3}}</span></li>
-                    <li>Inputs Fields: <span id="input-fields-count">{{categories.4}}</span></li>
+                    <li>Buttons: <span id="buttons-count">Loading...</span></li>
+                    <li>Links: <span id="links-count">Loading...</span></li>
+                    <li>Paragraphs: <span id="paragraphs-count">Loading...</span></li>
+                    <li>Submit Fields: <span id="submit-fields-count">Loading...</span></li>
+                    <li>Inputs Fields: <span id="input-fields-count">Loading...</span></li>
                 </ul>
             </div>
 
             <!-- Right column-->
             <div class="test-case-summary">
                 <p class="generated-count">
-                    <span id="test-case-progress">{{test_case_count}}</span> / <span id="test-case-total">{{ui_element_count}}</span>
+                    <span id="test-case-progress">Loading...</span> / <span id="test-case-total">Loading...</span>
                 </p>
                 <!-- generating test cases... | generation completed! -->
-                <p id="generation-status">generation completed!</p>
+                <p id="generation-status">generating test cases...</p>
                 <div class="action-buttons">
                     <button id="print-btn">Print</button>
                     <button id="download-btn">Download CSV</button>
@@ -66,9 +66,7 @@
                 {{ table|safe }} 
             </div>
             {% endfor %} -->
-        <div class="table-container">
-            {{dyanamic_test_cases|safe}}
-        </div>        
+        <div class="table-container"></div>        
 
     </main>
 
@@ -79,25 +77,124 @@
 
     <!-- <script src="{% static 'ngq_app/script.js'%}"></script> -->
     <script>
-        // click download button
-        document.getElementById("download-btn").addEventListener("click", () => {
-            window.location.href = "/download";
+        //// BUTTONS ////
+        // click download pdf button
+        document.getElementById("print-btn").addEventListener("click", () => {
+            window.open("/download_pdf");
         });
 
-        // click download pdf button
-        document.getElementById("download-pdf-btn").addEventListener("click", () => {
-            window.location.href = "/download_pdf";
+        // click download button
+        document.getElementById("download-btn").addEventListener("click", () => {
+            window.open("/download");
         });
 
         // click regenerate button
         document.getElementById("regenerate-btn").addEventListener("click", () => {
-            window.location.href = "/loading";
+            window.open("/loading");
         });
 
         // click new url button
         document.getElementById("new-url-btn").addEventListener("click", () => {
-            window.location.href = "/";
+            window.open("/");
         });
+
+        //// FETCH / ASYNC FUNCTIONS ////
+        // Scraping
+        async function processData() {
+            try {
+                console.log("Scraping Begins");
+                const response = await fetch('/process_data', {
+                    signal: stop_fetch.signal,
+                    });
+
+                const data = await response.json();
+                if (data.status === 'completed') {
+                    processResults();
+                    // window.location.href = '/loading_results';
+                }
+            } catch (error) {
+                console.log("Closing page and its functions");
+                const response = await fetch('/cancel_scraping');
+
+                const data = await response.json();
+                if (data.status === 'completed') {
+                    console.log("Scraping Cancelled");
+                }
+            }
+        }
+        // Generation : Dynamic Results
+        const socket = new WebSocket('ws://'+ window.location.host +'/ws/updates/');
+        socket.onopen = () => {
+            console.log("Connection Opened");
+        }
+        socket.onmessage = function(event) {
+            // Parse the incoming JSON data
+            const context = JSON.parse(event.data);
+
+            // Dynamically update statistics
+            document.getElementById('test-url').innerText = context.url;
+            document.getElementById('total-elements').innerText = context.elements_count;
+            document.getElementById('buttons-count').innerText = context.buttons_count;
+            document.getElementById('links-count').innerText = context.links_count;
+            document.getElementById('paragraphs-count').innerText = context.paragraphs_count;
+            document.getElementById('submit-fields-count').innerText = context.submit_fields_count;
+            document.getElementById('input-fields-count').innerText = context.input_fields_count;
+            document.getElementById('test-case-total').innerText = context.elements_count;
+
+            // Dynamically update Table
+            document.getElementById('table-container').innerHTML = context.test_cases_dynamic;
+        };
+        async function processResults() {
+            try {
+                console.log("Generation Begins");
+                const response = await fetch('/process_results',{
+                    signal: stop_fetch.signal,
+                });
+                const data = await response.json();
+                if (data.status === 'completed') {
+                    document.getElementById('test-case-progress').innerText = "generation completed!"
+                }
+            } catch (error) {
+                console.log("Closing page and its functions");
+                const response = await fetch('/cancel_generation');
+
+                const data = await response.json();
+                if (data.status === 'completed') {
+                    console.log("Generation Cancelled");
+                }
+            }
+        }
+
+        //// STOP FUNCTIONS ////
+        // Stop Scraping
+        const stop_fetch = new AbortController();
+        
+        //// ON LOAD | ON UNLOAD ////
+        window.onload = function() {
+            // Start Scraping
+            processData();
+        };
+        window.onbeforeunload = function() {
+            // Trigger All Stop Signals
+            stop_fetch.abort();
+
+            // Socket Closing
+            try {
+                socket.close();
+                console.log("Connection Closed");
+            } catch (error) {
+                // Do Nothing
+            }
+        }
+
+        // //// TAB IDENTIFICATION ////
+        // function generateUUID() {
+        //     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        //         const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        //         return v.toString(16);
+        //     });
+        // }
+        // const tabID = generateUUID();
     </script>
 </body>
 </html>

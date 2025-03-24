@@ -1,15 +1,3 @@
-from django.shortcuts import render, redirect
-from django.http import HttpResponse
-from django.http import HttpResponseRedirect
-from django.shortcuts import render
-from django.http import JsonResponse
-import pandas as df
-import time # for checking runtime
-from django.template.loader import render_to_string
-import pdfkit
-from .forms import URLForm
-from .utils import data_scrape, create_table_dataset, get_divide_indices, create_tables, divide_scraped_data, divide_llm_output, clean_url, remove_common_error, load_model_chain
-
 ## Code References
 # - Microsoft Copilot advice
 # - Django Documentation (Getting Started) : https://docs.djangoproject.com/en/5.1/intro/tutorial01/
@@ -17,10 +5,27 @@ from .utils import data_scrape, create_table_dataset, get_divide_indices, create
 # - Django Documentation (Request/Session) : https://docs.djangoproject.com/en/5.1/topics/http/sessions/
 # - Django Documentation (Async, Uvicorn) : 
 
-## OPTIONAL TODO: User Restrictions to avoid fatal async errors
-# - When GENERATING TEST CASES, disable entering of new URL
-# - MAIN PROBLEM: I can't do anything to stop the .invoke function run
-# - IDEA : When RUNNING, stop navigation
+## Django Imports + Time
+from django.shortcuts import render, redirect
+from django.http import HttpResponse
+from django.http import HttpResponseRedirect
+from django.shortcuts import render
+from django.http import JsonResponse
+import time # for checking runtime
+
+## Imports for Tables and Download
+import pandas as df
+from django.template.loader import render_to_string
+import pdfkit
+from .forms import URLForm
+from .utils import data_scrape, create_table_dataset, get_divide_indices, create_tables, divide_scraped_data, divide_llm_output, clean_url, remove_common_error, load_model_chain
+
+## Imports for asynchronous functions
+from channels.layers import get_channel_layer
+from asgiref.sync import async_to_sync
+import asyncio
+
+## TODO : Address Two-Tab Generation / Scraping Potential Errors
 
 ## INDEX PAGE ##
 def index(request):
@@ -30,35 +35,64 @@ def index(request):
         form = URLForm(request.POST)
         if form.is_valid():
             request.session['url'] = form.cleaned_data['url']
-            return redirect("loading", permanent=True)
+            return redirect("results", permanent=True)
         else :
             print(False)
 
     # Load HTML
     return render(request, "ngq_app/home.html", {"form": form})
 
-## LOADING PAGE ##
-def loading(request):
-    # Javascript in loading.html does the threading
-    return render(request, "ngq_app/loading.html")
+## ABOUT PAGE ##
+def about(request):
+    return render(request, "ngq_app/about.html")
 
-## PROCESS DATA ##
-def process_data(request):
+## FAQ PAGE ##
+def faq(request):
+    return render(request, "ngq_app/faq.html")
+
+## DYNAMIC RESULTS PAGE ##
+def results(request):
+    # update_context(request)
+    return render(request, "ngq_app/results.html") # , request.session['full_context']
+
+## SCRAPING PROCEDURE (ASYNCHRONOUS) ##
+# Cancellation (ran through fetch)
+async def cancel_scraping(request):
+    # Cancel Scraping Task
+    request.session['scraping_task'].cancel()
+# Procedure Proper
+async def scrape_procedure(request):
+    try:
+        start = time.time()
+        request.session['scraped_dataset'] = data_scrape(request.session['url'])
+        request.session['scraped_data'] = (request.session['scraped_dataset'])[0]
+        request.session['ids'] = (request.session['scraped_dataset'])[1]
+        request.session['indices'] = get_divide_indices(request.session['scraped_data'])
+        end = time.time()
+        print(f"Scraping Finished In : {(end-start) * 10**3}, ms")
+    except asyncio.CancelledError:
+        print('scrape_procedure : cancel procedure begins')
+        raise
+    finally:
+        print('scrape_procedure : cancel procedure ends')
+# Kickstart function (ran through fetch)
+async def process_data(request):
+    # JSON Response
     json_response = JsonResponse({'status': 'completed'})
-    start = time.time()
-    request.session['scraped_dataset'] = data_scrape(request.session['url'])
-    request.session['scraped_data'] = (request.session['scraped_dataset'])[0]
-    request.session['ids'] = (request.session['scraped_dataset'])[1]
-    request.session['indices'] = get_divide_indices(request.session['scraped_data'])
-    end = time.time()
-    print(f"Scraping Finished In : {(end-start) * 10**3}, ms")
+    # Initialize Task
+    request.session['scraping_task'] = asyncio.create_task(scrape_procedure(request))
+    try:
+        # Start Scraping Task
+        await request.session['scraping_task']
+    except asyncio.CancelledError:
+        print("scrape_procedure() is successfully cancelled")
     return json_response
 
 ## UPDATE CONTEXT ##
 def update_context(request):
     # Divide LLM Output
     request.session['divided_llm_output'] = divide_llm_output(request.session['llm_output'], request.session['indices'])
-    request.session['undivided_llm_output'] = create_table_dataset(request.session['llm_output'], ids=request.session['ids']).to_html(table_id="results-table", index=False).replace('\\n', '<br>').replace('<thead>', '<tbody>')
+    # request.session['undivided_llm_output'] = create_table_dataset(request.session['llm_output'], ids=request.session['ids']).to_html(table_id="results-table", index=False).replace('\\n', '<br>').replace('<thead>', '<tbody>')
 
     # Create HTML tables from dataframe
     categories = ["Button", "Link", "Header", "Paragraph", "Form Submit", "Input"]
@@ -76,40 +110,47 @@ def update_context(request):
         
     # Other Buttons / UI elements
     url = request.session['url']
-    from datetime import date
-    timestamp = (date.today()).strftime("%Y-%m-%d %H:%M:%S") 
+    # from datetime import date
+    # timestamp = (date.today()).strftime("%Y-%m-%d %H:%M:%S") 
     test_case_count = len(request.session['llm_output'])
     category_count = []
     for category in divide_scraped_data(request.session['scraped_data']):
         category_count.append(len(category))
+    elements_count = len(request.session['scraped_data'])
 
     # Store Context for printing pdf
     # OPTIONAL TODO : Consider using this as context
     request.session['full_context'] = {
-        "test_cases" : request.session['tables'], 
-        "test_cases_undivided" : request.session['undivided_llm_output'],
+        ## LEGACY CONTEXT / UNUSED CONTEXT
+        # "test_cases_undivided" : request.session['undivided_llm_output'],
+        # "timestamp" : timestamp, 
+        # "test_cases" : request.session['tables'], 
+        ## USED CONTEXT
         "test_cases_dynamic" : request.session['dynamic_test_cases'],
         "url" : url, 
-        "timestamp" : timestamp, 
         "test_case_count" : test_case_count, 
         "categories" : categories,
         "category_count" : category_count,
+        "buttons_count" : category_count[0],
+        "links_count" : category_count[1],
+        "paragraphs_count" : category_count[2],
+        "submit_fields_count" : category_count[3],
+        "input_fields_count" : category_count[4],
+        "elements_count" : elements_count,
         }
 
-## LOADING RESULTS ##
-def loading_results(request):
-    return render(request, "ngq_app/loading_results.html")
-
-import time
-from channels.layers import get_channel_layer
-from asgiref.sync import async_to_sync
-
-def process_results(request):
-
-    ## Asynchronous Setup
+## GENERATION PROCEDURE (ASYNCHRONOUS) ##
+# Cancellation (ran through fetch)
+async def cancel_generation(request):
+    # Cancel Generation Task
+    request.session['generation_task'].cancel()
+# Procedure Proper
+async def generation_procedure(request):
+    ## Asynchronous (Update Frontend) Setup
     from .consumers import cancel_flags
     channel_layer = get_channel_layer()
     session_id = request.session.session_key
+
     print(f"Process_Results {session_id}")
     cancel_flag = cancel_flags.get(session_id)
     group_name = "updates"
@@ -121,58 +162,57 @@ def process_results(request):
 
     # Return Data
     request.session['llm_output'] = []
-    # Prepare Json Response
-    json_response = JsonResponse({"status": "completed"})
     
-    i = 0
-    total = len(request.session['scraped_data'])
-    for item in request.session['scraped_data']:
-        # First Check
-        if cancel_flag and cancel_flag.is_set():
-            print("Processing Scraped Data is Cancelled Safely")
-            json_response = JsonResponse({"status": "cancelled"})
-            break
+    try:
+        i = 0
+        total = len(request.session['scraped_data'])
+        for item in request.session['scraped_data']:
+            # Early Cancellation Attempt : Final Check
+            if cancel_flag and cancel_flag.is_set():
+                print("Processing Scraped Data is Cancelled Early")
+                break
 
-        test_case = chain.invoke({"ui_element": str(item), "url": request.session['url']})
-        test_case = remove_common_error(test_case)
+            test_case = chain.invoke({"ui_element": str(item), "url": request.session['url']})
+            test_case = remove_common_error(test_case)
 
-        # Second Check
-        if cancel_flag and cancel_flag.is_set():
-            print("Processing Scraped Data is Cancelled Safely")
-            json_response = JsonResponse({"status": "cancelled"})
-            break
+            # Early Cancellation Attempt : SFinal Check
+            if cancel_flag and cancel_flag.is_set():
+                print("Processing Scraped Data is Cancelled Early")
+                break
 
-        # Update LLM_Output
-        request.session['llm_output'].append(test_case)
-        update_context(request)
-        # Experimental "okay_to_delete" function. Not Used
-        async_to_sync(channel_layer.group_send)(
-            group_name,
-            {
-                "type": "okay_to_delete",
-            }
-        )
-        # Update Frontend
-        async_to_sync(channel_layer.group_send)(
-            group_name,
-            {
-                "type": "update_message",
-                "context": request.session['full_context'],
-            }
-        )
+            # Update LLM_Output
+            request.session['llm_output'].append(test_case)
+            update_context(request)
+            # Update Frontend
+            async_to_sync(channel_layer.group_send)(
+                group_name,
+                {
+                    "type": "update_message",
+                    "context": request.session['full_context'],
+                }
+            )
 
-        # LLM Reset To Free Up Context
-        chain = load_model_chain(template, model_str)
-        if (DEBUG_SETTING == 1):
-            print(f"test case {i} out of {total} generated")
-        i += 1
-
+            # LLM Reset To Free Up Context
+            chain = load_model_chain(template, model_str)
+            if (DEBUG_SETTING == 1):
+                print(f"test case {i} out of {total} generated")
+            i += 1
+    except asyncio.CancelledError:
+        print('generation_procedure : cancel procedure begins')
+        raise
+    finally:
+        print('generation_procedure : cancel procedure ends')
+# Kickstart function (ran through fetch)
+async def process_results(request):
+    # JSON Response
+    json_response = JsonResponse({"status": "completed"})
+    request.session['generation_task'] = asyncio.create_task(generation_procedure(request))
+    try:
+        # Start Scraping Task
+        await request.session['generation_task']
+    except asyncio.CancelledError:
+        print("generation_procedure() is successfully cancelled")
     return json_response
-
-## RESULTS PAGE ##
-def results(request):
-    update_context(request)
-    return render(request, "ngq_app/results.html", request.session['full_context'])
 
 ## DOWNLOAD ##
 # Download CSV
@@ -195,3 +235,11 @@ def download_pdf(request):
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}.pdf"'
     return response
+
+# ## LOADING PAGE ##
+# def loading(request):
+#     # Javascript in loading.html does the threading
+#     return render(request, "ngq_app/loading.html")
+# ## LOADING RESULTS ##
+# def loading_results(request):
+#     return render(request, "ngq_app/loading_results.html")

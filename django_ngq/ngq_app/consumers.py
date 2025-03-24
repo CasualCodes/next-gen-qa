@@ -24,14 +24,10 @@ class UpdateConsumer(AsyncWebsocketConsumer):
             cancel_flags[self.session_id].set()
         
         await self.channel_layer.group_discard(self.group_name, self.channel_name)
-        print("Halting Complete")
+        print("Disconnect Complete")
         raise StopConsumer() 
 
     async def update_message(self, event):
         context = event['context']  # The dict being passed
         # Send the dict as JSON
         await self.send(text_data=json.dumps(context))
-
-    # Experimental "okay_to_delete" function. Not Used
-    async def okay_to_delete(self, event):
-        self.deletable = True
