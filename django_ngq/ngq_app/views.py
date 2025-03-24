@@ -67,6 +67,12 @@ def update_context(request):
     while i < len(request.session['tables']):
         (request.session['tables'])[i] = (request.session['tables'])[i].to_html(table_id="results-table", index=False).replace('\\n', '<br>').replace('<thead>', '<tbody>')
         i+=1
+
+    ## Experimental : Safe Table Divsion
+    i = 0
+    while i < len(request.session['tables']):
+        request.session['dynamic_test_cases'] = request.session['dynamic_test_cases'] + f"<h3>{categories[i]}</h3>" + (request.session['tables'])[i]
+        i+=1
         
     # Other Buttons / UI elements
     url = request.session['url']
@@ -82,6 +88,7 @@ def update_context(request):
     request.session['full_context'] = {
         "test_cases" : request.session['tables'], 
         "test_cases_undivided" : request.session['undivided_llm_output'],
+        "test_cases_dynamic" : request.session['dynamic_test_cases'],
         "url" : url, 
         "timestamp" : timestamp, 
         "test_case_count" : test_case_count, 
