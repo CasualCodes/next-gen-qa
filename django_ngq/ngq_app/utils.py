@@ -420,6 +420,8 @@ def create_test_cases(data, model_str : str = model_str , template : str = templ
         if (DEBUG_SETTING == 1):
             print(f"test case {i} out of {total} generated")
         i += 1
+        if i == 4:
+            break
 
     return return_data
 # ---------------------------------------------------------------------------------------------------

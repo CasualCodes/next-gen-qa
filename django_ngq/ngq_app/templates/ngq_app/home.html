@@ -5,8 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Next-Gen QA</title>
+    <title>Next-Gen QA - Home</title>
     <link rel="stylesheet" href="{% static 'ngq_app/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
@@ -14,85 +15,26 @@
         <div class="logo">
             <a href="/">Next-Gen QA</a>
         </div>
+        <ul>
+            <li><a href="/about">about</a></li>
+            <li><a href="/faq">faq</a></li>
+        </ul>
     </nav>
 
     <!-- Hero Section -->
     <section class="hero">
-        <h1>Welcome to Next-Gen QA!</h1>
-        <p>Enter your website URL to create test cases</p>
-        <form class="input-container" method="post">
-            {% csrf_token %}
-            {{ form }}
-            <input type="submit" id="generate-btn" value="Generate">
-        </form>
-    </section>
-
-    <!-- Features Section -->
-    <section class="features">
-        <div class="feature">
-            <div class="circle">
-                <span class="icon">&#128736;</span>
+        <div class="hero-content">
+            <h1>Test Smarter, Not Harder</h1>
+            <h2>Automate test case creation, so you can focus on testing.</h2>
+            <div class="input-container" method="post">
+                {% csrf_token %}
+                {{ form }}
+                <input type="submit" id="generate-btn" value="Generate">
             </div>
-            <h3>Automate Test Case Creation</h3>
-            <p>Generate accurate and efficient test cases in seconds.</p>
-        </div>
-        <div class="feature">
-            <div class="circle">
-                <span class="icon">&#11015;</span>
-            </div>
-            <h3>Download Results</h3>
-            <p>Easily export test cases in CSV format.</p>
-        </div>
-    </section>
-
-    <!-- About Section -->
-    <section class="about">
-        <h2>About Next-Gen QA</h2>
-        <p>Next-Gen QA simplifies website testing by automatically generating detailed test cases based on your website's structure and content. Our platform allows you to quickly create comprehensive test cases, covering key aspects of your site with ease. These generated test cases can be easily downloaded and integrated into your existing testing workflow. With this tool, you can ensure that your website is thoroughly tested, reducing manual effort and accelerating the testing process. Focus on delivering a high-quality user experience with reliable, automated test case generation.</p>
-    </section>
-
-    <!-- FAQ Section -->
-    <section class="faq">
-        <h2>Frequently Asked Questions</h2>
-    
-        <div class="faq-item">
-            <h4>How does Next-Gen QA generate test cases for my website?</h4>
-            <p>Next-Gen QA analyzes the structure and content of your website to automatically generate relevant and comprehensive test cases, ensuring that all key functionalities are covered.</p>
-        </div>
-    
-        <div class="faq-item">
-            <h4>In which format can I download the generated test cases?</h4>
-            <p>You can download the generated test cases in CSV format, making it easy to integrate them into your testing workflow.</p>
-        </div>
-    
-        <div class="faq-item">
-            <h4>Is there a limit to the number of test cases I can generate?</h4>
-            <p>There is no specific limit to the number of test cases you can generate. The platform is designed to generate test cases based on the complexity and content of your website, ensuring that all essential areas are covered.</p>
-        </div>
-    
-        <div class="faq-item">
-            <h4>How accurate are the generated test cases?</h4>
-            <p>The accuracy of the generated test cases depends on the quality and structure of your website. Our tool is designed to cover a wide range of common scenarios, but manual review is always recommended to ensure full coverage.</p>
-        </div>
-    
-        <div class="faq-item">
-            <h4>Can I use the generated test cases with other testing tools?</h4>
-            <p>Yes, since the test cases are provided in CSV format, you can easily import them into most testing tools or frameworks for execution.</p>
-        </div>
-    
-        <div class="faq-item">
-            <h4>How long does it take to generate test cases for my website?</h4>
-            <p>The time to generate test cases depends on the size and complexity of your website. Generally, the process is quick and can take just a few minutes.</p>
-        </div>
-    
-        <div class="faq-item">
-            <h4>Do I need to create an account to use Next-Gen QA?</h4>
-            <p>At the moment, no account is required to use Next-Gen QA. You can simply upload your website’s URL and start generating test cases immediately.</p>
         </div>
 
-        <div class="faq-item">
-            <h4>Have more questions or suggestions?</h4>
-            <p>We'd love to hear from you at <a href="mailto:nextgen@gmail.com">nextgen@gmail.com</a>.</p>
+        <div class="hero-image">
+            <img src="temp.gif" alt="Next-Gen QA in action" class="hero-gif">
         </div>
     </section>
 

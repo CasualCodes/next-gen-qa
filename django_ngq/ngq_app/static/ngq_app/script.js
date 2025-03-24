@@ -19,7 +19,7 @@ if (window.location.pathname.includes("/loading")) {
     };
 }
 
-// RESULTS PAGE
+// RESULTS PAGE // 
 if (window.location.pathname.includes("/results")) {
     // click download button
     document.getElementById("download-btn").addEventListener("click", () => {
