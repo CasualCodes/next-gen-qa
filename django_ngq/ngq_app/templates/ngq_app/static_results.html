@@ -41,7 +41,7 @@
             <!-- Right column-->
             <div class="test-case-summary">
                 <p class="generated-count">
-                    <span id="test-case-progress">{{test_case_count}}</span> / <span id="test-case-total">Loading...</span>
+                    <span id="test-case-progress">{{test_case_count}}</span> / <span id="test-case-total">{{elements_count}}</span>
                 </p>
                 <!-- generating test cases... | generation completed! -->
                 <p id="generation-status">generation completed!</p>
@@ -92,7 +92,7 @@
 
         // click regenerate button
         document.getElementById("regenerate-btn").addEventListener("click", () => {
-            window.open("/loading");
+            window.open("/results");
         });
 
         // click new url button

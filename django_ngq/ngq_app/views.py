@@ -26,7 +26,8 @@ from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync, sync_to_async
 import asyncio
 
-## TODO : Address Two-Tab Generation / Scraping Potential Errors
+## TODO : Address Two-Tab Generation / Scraping Potential Errors -> LIMITATION
+## TODO : Address Internal Errors
 
 ## INDEX PAGE ##
 def index(request):
@@ -231,8 +232,7 @@ async def generation_procedure(request):
             if (DEBUG_SETTING == 1):
                 print(f"test case {i} out of {total} generated")
             i += 1
-            asyncio.sleep(30)
-            if i == 2:
+            if i == 5:
                 break
     except asyncio.CancelledError:
         print('generation_procedure : cancel procedure begins')
