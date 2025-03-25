@@ -170,6 +170,7 @@ async def cancel_generation(request):
     # request.session['generation_task'].cancel()
     return JsonResponse({'status': 'completed'})
 # Procedure Proper
+## TODO : ADDRESS MULTI TABS ARE UPDATED BY THE SAME GROUP WEBSOCKET ISSUE
 async def generation_procedure(request):
     ## Asynchronous (Update Frontend) Setup
     from .consumers import cancel_flags
@@ -230,8 +231,8 @@ async def generation_procedure(request):
             if (DEBUG_SETTING == 1):
                 print(f"test case {i} out of {total} generated")
             i += 1
+            asyncio.sleep(30)
             if i == 2:
-                asyncio.sleep(30)
                 break
     except asyncio.CancelledError:
         print('generation_procedure : cancel procedure begins')

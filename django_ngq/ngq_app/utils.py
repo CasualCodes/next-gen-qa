@@ -400,6 +400,7 @@ def load_model_chain(template : str =  template, model_str : str = model_str, te
     chain = prompt | model
     return chain
 
+## INTEGRATED TO VIEWS
 def create_test_cases(data, model_str : str = model_str , template : str = template, url : str = "placeholder"):
     
     # Load LLM Chain
@@ -420,8 +421,6 @@ def create_test_cases(data, model_str : str = model_str , template : str = templ
         if (DEBUG_SETTING == 1):
             print(f"test case {i} out of {total} generated")
         i += 1
-        if i == 4:
-            break
 
     return return_data
 # ---------------------------------------------------------------------------------------------------
