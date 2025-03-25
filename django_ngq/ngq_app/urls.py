@@ -15,4 +15,5 @@ urlpatterns = [
     path("faq", views.faq, name="faq"),
     path("cancel_scraping", views.cancel_scraping, name="cancel_scraping"),
     path("cancel_generation", views.cancel_generation, name="cancel_generation"),
+    path("static_results", views.static_results, name="static_results")
 ]

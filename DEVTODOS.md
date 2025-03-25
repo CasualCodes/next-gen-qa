@@ -108,7 +108,7 @@
         - Can TRY to integrate, but we'll see in cycle 3
       - [#] Human Evaluation
 
-# RE: Cycle 3 Todos (Updated: 03-21-2025)
+# RE: Cycle 3 Todos (Updated: 03-25-2025)
 ## Section 1: Cleanup + Adding Credits
 - [x] Cleanup + Etc. (Documentation, Basic Security Measure, Etc.)
   - [x] Prompt Generator + LLM
@@ -239,7 +239,11 @@
 - [x] **PLAN A Branch : Little to No Dependencies**
   - Integrate render to the prompt generator loop
   - Every after a test case is generated, render the page / update the page with AJAX
+  - [x] Reimplementation
+  - [X] Implement Frontend
   - [ ] Polishing
+    - Ensure connection establishment and closing
+    - Major Issue : Multi Tab Running - Websocket Connection
 - [#] PLAN B Branch : All The Dependencies
   - Use Celery and its dependencies to make an asynchronous function
 

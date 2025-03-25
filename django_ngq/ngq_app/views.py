@@ -56,6 +56,10 @@ def results(request):
     # update_context(request)
     return render(request, "ngq_app/results.html") # , request.session['full_context']
 
+def static_results(request):
+    update_context(request)
+    return render(request, "ngq_app/static_results.html", request.session['full_context']) # , request.session['full_context']
+
 ## SCRAPING PROCEDURE (ASYNCHRONOUS) ##
 # Cancellation (ran through fetch)
 async def cancel_scraping(request):

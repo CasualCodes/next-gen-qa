@@ -138,7 +138,7 @@
             <!-- Left column -->
             <div class="info">
                 <p><strong>Test cases generated for:</strong> <span id="test-url">{{url}}</span></p>
-                <p><strong>Total Elements Identified:</strong> <span id="total-elements">{{ui_element_count}}</span></p>
+                <p><strong>Total Elements Identified:</strong> <span id="total-elements">{{elements_count}}</span></p>
                 <ul id="breakdown-list">
                     <li>Buttons: <span id="buttons-count">{{categories.0}}</span></li>
                     <li>Links: <span id="links-count">{{categories.1}}</span></li>
@@ -151,16 +151,8 @@
             <!-- Right column-->
             <div class="test-case-summary">
                 <p class="generated-count">
-                    <span id="test-case-progress">{{test_case_count}}</span> / <span id="test-case-total">{{ui_element_count}}</span>
+                    <span id="test-case-progress">{{test_case_count}}</span> / <span id="test-case-total">{{elements_count}}</span>
                 </p>
-                <!-- generating test cases... | generation completed! -->
-                <p id="generation-status">generation completed!</p>
-                <div class="action-buttons">
-                    <button id="print-btn">Print</button>
-                    <button id="download-btn">Download CSV</button>
-                    <button id="regenerate-btn">Regenerate</button>
-                    <button id="new-url-btn">New URL</button>
-                </div>
             </div>
         </div>
 
