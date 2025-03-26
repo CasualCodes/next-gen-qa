@@ -232,7 +232,7 @@ async def generation_procedure(request):
             if (DEBUG_SETTING == 1):
                 print(f"test case {i} out of {total} generated")
             i += 1
-            if i == 5:
+            if i == 3:
                 break
     except asyncio.CancelledError:
         print('generation_procedure : cancel procedure begins')
