@@ -144,7 +144,7 @@
     - [x] Static : CSS
     - [x] Templates : HTML Pages
     - [x] TemplateTags : Index Filter
-- [ ] Make Repository Public
+- [-] Make Repository Public
 
 ## Section 2: Finetuning Model
 - [x] The Final Run of CYCLE 3 FINETUNING EVALUATION
@@ -220,9 +220,9 @@
   - Used 30 Epochs, 2e-4 Model with Detailed Modelfile Instructions
 
 ## Section 3.A [Requires Section 1 to be completed]: Deployment
-- [ ] Git Pull
-- [ ] Basic Security Setup
-- [ ] Run Server
+- [-] Git Pull
+- [-] Basic Security Setup
+- [-] Run Server
 
 ## Section 3.B [Requires Section 1 to be completed]: Dynamic Results Page
 - [-] Planning / Discussion
@@ -249,3 +249,14 @@
 
 # Optional TODOS (Updated: 03-14-2025)
   - Prompt Generator + LLM : add time to generation to check time generated per test case
+
+# RE: Cycle 3 Todos (Updated: 03-27-2025)
+## Section 1
+- [ ] UI Final Implementation
+- [ ] Final Polishing + Creditatio-
+- [ ] Make Repository Public
+
+## Section 2 [Requires Section 1 to be completed]: Deployment
+- [ ] Git Pull
+- [ ] Basic Security Setup
+- [ ] Run Server
