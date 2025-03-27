@@ -28,13 +28,14 @@
             <!-- Loading... or double curly brackets-->
             <div class="info">
                 <p><strong>Test cases generated for:</strong> <span id="test-url">{{url}}</span></p>
-                <p><strong>Total Elements Identified:</strong> <span id="total-elements">{{elements_count}}</span></p>
+                <p><strong>Total Elements Identified:</strong> <span id="total-elements">{{accurate_elements_count}}</span></p>
                 <ul id="breakdown-list">
-                    <li>Buttons: <span id="buttons-count">{{categories.0}}</span></li>
-                    <li>Links: <span id="links-count">{{categories.1}}</span></li>
-                    <li>Paragraphs: <span id="paragraphs-count">{{categories.2}}</span></li>
-                    <li>Submit Fields: <span id="submit-fields-count">{{categories.3}}</span></li>
-                    <li>Inputs Fields: <span id="input-fields-count">{{categories.4}}</span></li>
+                    <li>Buttons: <span id="buttons-count">{{category_count.0}}</span></li>
+                    <li>Links: <span id="links-count">{{category_count.1}}</span></li>
+                    <li>Headers: <span id="headers-count">{{category_count.2}}</span></li>
+                    <li>Paragraphs: <span id="paragraphs-count">{{category_count.3}}</span></li>
+                    <li>Submit Fields: <span id="submit-fields-count">{{category_count.4}}</span></li>
+                    <li>Inputs Fields: <span id="input-fields-count">{{category_count.5}}</span></li>
                 </ul>
             </div>
 

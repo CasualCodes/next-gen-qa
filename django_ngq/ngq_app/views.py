@@ -18,7 +18,7 @@ import pandas as df
 from django.template.loader import render_to_string
 import pdfkit
 from .forms import URLForm
-from .utils import data_scrape, create_table_dataset, get_divide_indices, create_tables, divide_scraped_data, divide_llm_output, clean_url, remove_common_error, load_model_chain
+from .utils import data_scrape, create_table_dataset, get_divide_indices, create_tables, divide_scraped_data, divide_llm_output, clean_url, remove_common_error, load_model_chain, get_accurate_element_count, table_prompt_generator
 from .tasks_store import tasks
 
 ## Imports for asynchronous functions
@@ -67,7 +67,10 @@ async def cancel_scraping(request):
     # Cancel Scraping Task
     task_id = await sync_to_async(request.session.get)('task_id', default=None) # str(id(request))
     print(f"cancel_scraping {task_id}")
-    tasks[task_id]['scraping_task'].cancel()
+    try:
+        tasks[task_id]['scraping_task'].cancel()
+    except Exception:
+        print("this error is raised from successful scraping cancellation")
     return JsonResponse({'status': 'completed'})
 # Procedure Proper
 async def scrape_procedure(request):
@@ -80,7 +83,10 @@ async def scrape_procedure(request):
         # request.session['scraped_data'] = (request.session['scraped_dataset'])[0]
         await sync_to_async(request.session.__setitem__)('ids', scraped_dataset[1])
         # request.session['ids'] = (request.session['scraped_dataset'])[1]
-        indices = get_divide_indices(scraped_dataset[0])
+        divided_scraped_data = divide_scraped_data(scraped_dataset[0])
+        await sync_to_async(request.session.__setitem__)('divided_scraped_data', divided_scraped_data)
+        #  = divide_scraped_data(request.session['scraped_data'])
+        indices = get_divide_indices(divided_scraped_data)
         await sync_to_async(request.session.__setitem__)('indices', indices)
         # request.session['indices'] = get_divide_indices(request.session['scraped_data'])
         end = time.time()
@@ -115,19 +121,23 @@ def update_context(request):
     request.session['divided_llm_output'] = divide_llm_output(request.session['llm_output'], request.session['indices'])
     request.session['undivided_llm_output'] = create_table_dataset(request.session['llm_output'], ids=request.session['ids']).to_html(table_id="results-table", index=False).replace('\\n', '<br>').replace('<thead>', '<tbody>')
 
-    # Create HTML tables from dataframe
+    # Categories and Count
     categories = ["Button", "Link", "Header", "Paragraph", "Form Submit", "Input"]
-    request.session['tables'] = create_tables(request.session['divided_llm_output'], request.session['ids'], request.session['indices'])
+    category_count = get_accurate_element_count(request.session['ids'], request.session['indices'], request.session['divided_scraped_data'])
+    
+    # Create HTML tables from dataframe
+    prompts = table_prompt_generator(request.session['scraped_data'], request.session['url'])
+    request.session['tables'] = create_tables(request.session['divided_llm_output'], request.session['ids'], request.session['indices'], prompts) #, prompts
     i = 0
     while i < len(request.session['tables']):
         (request.session['tables'])[i] = (request.session['tables'])[i].to_html(table_id="results-table", index=False).replace('\\n', '<br>').replace('<thead>', '<tbody>')
         i+=1
 
-    ## Experimental : Safe Table Divsion
+    ## Safe Dynamic Table Divsion
     i = 0
     request.session['dynamic_test_cases'] = ""
     while i < len(request.session['tables']):
-        request.session['dynamic_test_cases'] = request.session['dynamic_test_cases'] + f"<h3>{categories[i]}</h3>" + (request.session['tables'])[i]
+        request.session['dynamic_test_cases'] = request.session['dynamic_test_cases'] + f"<h3>{category_count[i]} {categories[i]}s</h3>" + (request.session['tables'])[i]
         i+=1
         
     # Other Buttons / UI elements
@@ -135,16 +145,13 @@ def update_context(request):
     # from datetime import date
     # timestamp = (date.today()).strftime("%Y-%m-%d %H:%M:%S") 
     test_case_count = len(request.session['llm_output'])
-    category_count = []
-    for category in divide_scraped_data(request.session['scraped_data']):
-        category_count.append(len(category))
     elements_count = len(request.session['scraped_data'])
+    accurate_elements_count = sum(category_count)
 
-    # Store Context for printing pdf
-    # OPTIONAL TODO : Consider using this as context
+    # Store Context
     request.session['full_context'] = {
         ## LEGACY CONTEXT / UNUSED CONTEXT
-        "test_cases_undivided" : request.session['undivided_llm_output'],
+        # "test_cases_undivided" : request.session['undivided_llm_output'],
         # "timestamp" : timestamp, 
         # "test_cases" : request.session['tables'], 
         ## USED CONTEXT
@@ -155,10 +162,12 @@ def update_context(request):
         "category_count" : category_count,
         "buttons_count" : category_count[0],
         "links_count" : category_count[1],
-        "paragraphs_count" : category_count[2],
-        "submit_fields_count" : category_count[3],
-        "input_fields_count" : category_count[4],
+        "headers_count" : category_count[2],
+        "paragraphs_count" : category_count[3],
+        "submit_fields_count" : category_count[4],
+        "input_fields_count" : category_count[5],
         "elements_count" : elements_count,
+        "accurate_elements_count" : accurate_elements_count,
         }
 
 ## GENERATION PROCEDURE (ASYNCHRONOUS) ##
@@ -167,7 +176,10 @@ async def cancel_generation(request):
     # Cancel Generation Task
     task_id = await sync_to_async(request.session.get)('task_id', default=None)
     print(f"cancel_generation {task_id}")
-    tasks[task_id]['generation_task'].cancel()
+    try:
+        tasks[task_id]['generation_task'].cancel()
+    except Exception:
+        print("this error is raised by successful generation cancellation")
     # request.session['generation_task'].cancel()
     return JsonResponse({'status': 'completed'})
 # Procedure Proper
@@ -232,8 +244,8 @@ async def generation_procedure(request):
             if (DEBUG_SETTING == 1):
                 print(f"test case {i} out of {total} generated")
             i += 1
-            if i == 3:
-                break
+            # if i == 3:
+            #     break
     except asyncio.CancelledError:
         print('generation_procedure : cancel procedure begins')
         raise
