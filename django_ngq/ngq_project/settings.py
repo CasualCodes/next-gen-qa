@@ -31,13 +31,15 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    "ngq_app",
+    "channels",
+    "daphne", # or python -m uvicorn ngq_project.asgi:application
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
-    "ngq_app",
 ]
 
 MIDDLEWARE = [
@@ -70,6 +72,13 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "ngq_project.wsgi.application"
 
+ASGI_APPLICATION = "ngq_project.asgi.application"
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels.layers.InMemoryChannelLayer",
+    }
+}
 
 # Database
 # https://docs.djangoproject.com/en/5.1/ref/settings/#databases
@@ -117,6 +126,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/5.1/howto/static-files/
 
 STATIC_URL = "static/"
+
+STATICFILES_DIR = [
+    BASE_DIR / "static",
+    "\\django_ngq\\ngq_app\\static"
+]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/5.1/ref/settings/#default-auto-field

@@ -1,0 +1,105 @@
+{% load static %}
+{% load index_filter %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Results - Next-Gen QA</title>
+    <link rel="stylesheet" href="{% static 'ngq_app/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav>
+        <div class="logo">
+            <a href="/">Next-Gen QA</a>
+        </div>
+        <ul>
+            <li><a href="/about">about</a></li>
+            <li><a href="/faq">faq</a></li>
+        </ul>
+    </nav>
+
+    <!-- Results Section -->
+    <main class="results">
+        <div class="results-content">
+            <!-- Left column -->
+            <!-- Loading... or double curly brackets-->
+            <div class="info">
+                <p><strong>Test cases generated for:</strong> <span id="test-url">{{url}}</span></p>
+                <p><strong>Total Elements Identified:</strong> <span id="total-elements">{{accurate_elements_count}}</span></p>
+                <ul id="breakdown-list">
+                    <li>Buttons: <span id="buttons-count">{{category_count.0}}</span></li>
+                    <li>Links: <span id="links-count">{{category_count.1}}</span></li>
+                    <li>Headers: <span id="headers-count">{{category_count.2}}</span></li>
+                    <li>Paragraphs: <span id="paragraphs-count">{{category_count.3}}</span></li>
+                    <li>Submit Fields: <span id="submit-fields-count">{{category_count.4}}</span></li>
+                    <li>Inputs Fields: <span id="input-fields-count">{{category_count.5}}</span></li>
+                </ul>
+            </div>
+
+            <!-- Right column-->
+            <div class="test-case-summary">
+                <p class="generated-count">
+                    <span id="test-case-progress">{{test_case_count}}</span> / <span id="test-case-total">{{elements_count}}</span>
+                </p>
+                <!-- generating test cases... | generation completed! -->
+                <p id="generation-status">generation completed!</p>
+                <div class="action-buttons">
+                    <button id="print-btn">Print</button>
+                    <button id="download-btn">Download CSV</button>
+                    <button id="regenerate-btn">Regenerate</button>
+                    <button id="new-url-btn">New URL</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Summary
+        <p class="summary">
+            Our system analyzed your website and generated the following test cases, ensuring comprehensive coverage for your QA process.
+        </p> -->
+
+        <!-- Results Table -->
+            <!-- {% for table in test_cases %}
+            <h3>{{categories|index:forloop.counter0}}</h3>
+            <div>
+                {{ table|safe }} 
+            </div>
+            {% endfor %} -->
+        <div id="table-container">
+            {{test_cases_dynamic|safe}}
+        </div>        
+
+    </main>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 Next-Gen QA | All Rights Reserved</p>
+    </footer>
+
+    <!-- <script src="{% static 'ngq_app/script.js'%}"></script> -->
+    <script>
+        //// BUTTONS ////
+        // click download pdf button
+        document.getElementById("print-btn").addEventListener("click", () => {
+            window.open("/download_pdf");
+        });
+
+        // click download button
+        document.getElementById("download-btn").addEventListener("click", () => {
+            window.open("/download");
+        });
+
+        // click regenerate button
+        document.getElementById("regenerate-btn").addEventListener("click", () => {
+            window.open("/results");
+        });
+
+        // click new url button
+        document.getElementById("new-url-btn").addEventListener("click", () => {
+            window.open("/");
+        });
+    </script>
+</body>
+</html>

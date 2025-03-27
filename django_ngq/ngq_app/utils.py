@@ -293,12 +293,18 @@ def divide_llm_output(llm_output, indices):
         i = indices[index]
         j = indices[index+1]
         while (n >= i and n < j):
-            divided_data[k].append(llm_output[n])
+            try:
+                divided_data[k].append(llm_output[n])
+            except Exception:
+                pass
             n+=1
         k += 1
         index += 1
     while (n<len(llm_output)):
-        divided_data[k].append(llm_output[n])
+        try:
+            divided_data[k].append(llm_output[n])
+        except Exception:
+            pass
         n+=1
     
     return divided_data
@@ -367,6 +373,15 @@ def remove_common_error(output : str, setting : int = 0):
                 ]
         for error in errors:
             output = output.replace(error, "")
+        substring_errors = ["\n\nThe"]
+        for substring_error in substring_errors:
+            # https://www.geeksforgeeks.org/find-the-index-of-a-substring-in-python/
+            # To fix common generation error of fine-tuned model
+            try:
+                index = output.index(substring_error)
+                output = output[:index]
+            except Exception:
+                pass
     if (setting == 1 or setting == 2):
         # Adjustments are strings that are not intended to be deleted, but instead adjusted
         adjustments = ["Preconditions~", "Test Steps~", "Expected Result~"]
@@ -385,9 +400,7 @@ def load_model_chain(template : str =  template, model_str : str = model_str, te
     chain = prompt | model
     return chain
 
-# from celery import shared_task
-
-# @shared_task
+## INTEGRATED TO VIEWS
 def create_test_cases(data, model_str : str = model_str , template : str = template, url : str = "placeholder"):
     
     # Load LLM Chain
@@ -399,6 +412,7 @@ def create_test_cases(data, model_str : str = model_str , template : str = templ
     i = 0
     total = len(data)
     for item in data:
+        # Prompt generator -> LLM
         test_case = chain.invoke({"ui_element": str(item), "url": url})
         test_case = remove_common_error(test_case)
         # Note : There is no error checking unlike in table generation, to ensure that all scraped data have a test case generated
@@ -429,11 +443,20 @@ def csv_from_test_case_batches(filename, data):
     cols = dataframe_init(data)
     cols.to_csv(f"{filename}.csv", sep='\t', encoding='utf-8', index=False, header=True)
 
+## Recreate Prompts for Table
+def table_prompt_generator(scraped_data, url):
+    return_data = []
+    for ui_element in scraped_data:
+        prompt = f"Generate a functional usability test case for the following UI element: {ui_element} from the website: {url}"
+        return_data.append(prompt)
+    return return_data
+
 ## Create Table Dataset
 # - Creates a test case dataframe, ready to be turned into a table, turned to html for rendering, and for downloading as csv
 # - Saved index functions as a starting point for generating a set of tables with saved indices for division
-def create_table_dataset(llm_output, ids : list, saved_index : int = 0):
+def create_table_dataset(llm_output, ids : list, saved_index : int = 0, prompts = None):
 
+    prompt = []
     id = []
     objective = []
     precondition = []
@@ -446,7 +469,10 @@ def create_table_dataset(llm_output, ids : list, saved_index : int = 0):
         split_test_case = test_case.split('~')
         
         # Validate and skip if split is a failure
-        if len(split_test_case) != 4:
+        if len(split_test_case) == 4:
+            # Source Prompt
+            if prompts != None:
+                prompt.append(prompts[i])
             # Test Case ID
             id.append(ids[i])
             # Test Case Objective
@@ -462,23 +488,31 @@ def create_table_dataset(llm_output, ids : list, saved_index : int = 0):
 
         i+=1
 
-    data = {"Test Case ID" : id,
+    if prompts != None:
+        data = {"Prompt" : prompt,
+            "Test Case ID" : id,
             "Objective" : objective,
             "Precondition" : precondition,
             "Test Steps" : test_steps,
             "Expected Result" : expected_result,
             "Actual Result" : actual_result}
-
+    else:
+        data = {"Test Case ID" : id,
+                "Objective" : objective,
+                "Precondition" : precondition,
+                "Test Steps" : test_steps,
+                "Expected Result" : expected_result,
+                "Actual Result" : actual_result}
     return dataframe_init(data)
 
 ## Create Tables:
 # - Creates multiple tables based on indices
-def create_tables(divided_llm_output, ids, indices):
+def create_tables(divided_llm_output, ids, indices, prompts = None):
     tables = []
     i = 0
 
     for llm_output in divided_llm_output:
-        tables.append(create_table_dataset(llm_output, ids, indices[i]))
+        tables.append(create_table_dataset(llm_output, ids, indices[i], prompts))
         i+=1
 
     return tables
@@ -493,3 +527,39 @@ def clean_url(url : str):
     for article in articles:
         url = url.replace(article, '')
     return url
+
+# Get Accurate Element Count based on sub-ids
+def get_accurate_element_count(sub_ids, indices, divided_scraped_data):
+    return_data = []
+    first_index = 0
+    i = 0
+    first_index = 0
+    for index in indices:
+        if index == 0:
+            continue
+        if len(divided_scraped_data[i]) == 0:
+            i+=1
+            return_data.append(0)
+            continue
+        else:
+            i+=1
+        # Get Maximum Element
+        max_element = sub_ids[index-1]
+        # Clean Maximum Element
+        clean_index = max_element.index(".")
+        # Convert to Integer
+        int_max_element = int(max_element[:clean_index])
+        # Deduct from first index
+        int_max_element = int_max_element - first_index
+        # Update first index
+        first_index = first_index + int_max_element
+        return_data.append(int_max_element)
+    
+    # For the last group
+    max_element = sub_ids[len(sub_ids)-1-1]
+    clean_index = max_element.index(".")
+    int_max_element = int(max_element[:clean_index])
+    int_max_element = int_max_element - first_index
+    first_index = int_max_element
+    return_data.append(int_max_element)
+    return return_data

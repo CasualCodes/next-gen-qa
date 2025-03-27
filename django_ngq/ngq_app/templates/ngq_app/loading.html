@@ -24,19 +24,30 @@
 
     <!-- <script src="{% static 'ngq_app/script.js'%}"></script> -->
     <script>
-        function processData() {
-            fetch('/process_data')
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'completed') {
-                        window.location.href = '/results';
-                    }
-                });
+        const stop_fetch = new AbortController();
+
+        async function processData() {
+            try {
+                const response = await fetch('/process_data', {
+                    signal: stop_fetch.signal
+                    });
+
+                const data = await response.json();
+                if (data.status === 'completed') {
+                    window.location.href = '/loading_results';
+                }
+            } catch (error) {
+                console.log("Closing page and its functions");
+            }
         }
     
         window.onload = function() {
             processData();
         };
+
+        window.onbeforeunload = function() {
+            stop_fetch.abort();
+        }
     </script>
     
 </body>

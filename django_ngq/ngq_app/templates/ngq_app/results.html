@@ -5,8 +5,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Results - Next-Gen QA</title>
+    <title>Loading Results - Next-Gen QA</title>
     <link rel="stylesheet" href="{% static 'ngq_app/styles.css' %}">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 </head>
 <body>
     <!-- Navigation -->
@@ -14,70 +15,193 @@
         <div class="logo">
             <a href="/">Next-Gen QA</a>
         </div>
+        <ul>
+            <li><a href="/about">about</a></li>
+            <li><a href="/faq">faq</a></li>
+        </ul>
     </nav>
 
     <!-- Results Section -->
     <main class="results">
-        <div class="info">
-            <p>Test case generated for: <span id="website-url">{{url}}</span></p>
-            <p>Timestamp: <span id="timestamp">{{timestamp}}</span></p>
-        </div>
+        <div class="results-content">
+            <!-- Left column -->
+            <!-- Loading... or double curly brackets-->
+            <div class="info">
+                <p><strong>Test cases generated for:</strong> <span id="test-url">Loading...</span></p>
+                <p><strong>Total Elements Identified:</strong> <span id="total-elements">Loading...</span></p>
+                <ul id="breakdown-list">
+                    <li>Buttons: <span id="buttons-count">Loading...</span></li>
+                    <li>Links: <span id="links-count">Loading...</span></li>
+                    <li>Headers: <span id="headers-count">Loading...</span></li>
+                    <li>Paragraphs: <span id="paragraphs-count">Loading...</span></li>
+                    <li>Submit Fields: <span id="submit-fields-count">Loading...</span></li>
+                    <li>Inputs Fields: <span id="input-fields-count">Loading...</span></li>
+                </ul>
+            </div>
 
-        <div class="header-row">
-            <p class="generated-count"><span id="test-case-count">{{test_case_count}}</span> Test Cases Generated</p>
-            {% for category in categories %}
-                <p class="generated-count"><span id="test-case-count">{{category_count|index:forloop.counter0}}</span> from {{category}} elements</p>
-            {% endfor %}
-            <div class="buttons">
-                <button id="download-btn">Download CSV</button>
-                <button id="download-pdf-btn">Print</button>
-                <button id="regenerate-btn">Regenerate</button>
-                <button id="new-url-btn">New URL</button>
+            <!-- Right column-->
+            <div class="test-case-summary">
+                <p class="generated-count">
+                    <span id="test-case-progress">Loading...</span> / <span id="test-case-total">Loading...</span>
+                </p>
+                <!-- scraping website... | generating test cases... | generation completed! -->
+                <p id="generation-status">scraping website...</p>
+                <div class="action-buttons">
+                    <button id="print-btn">Print</button>
+                    <button id="download-btn">Download CSV</button>
+                    <button id="regenerate-btn">Regenerate</button>
+                    <button id="new-url-btn">New URL</button>
+                </div>
             </div>
         </div>
 
+        <!-- Summary
         <p class="summary">
             Our system analyzed your website and generated the following test cases, ensuring comprehensive coverage for your QA process.
-        </p>
+        </p> -->
 
         <!-- Results Table -->
-        <div class="table-container">
-            {% for table in test_cases %}
+            <!-- {% for table in test_cases %}
             <h3>{{categories|index:forloop.counter0}}</h3>
             <div>
                 {{ table|safe }} 
             </div>
-            {% endfor %}
-        </div>        
+            {% endfor %} -->
+        <div id="table-container"></div>        
 
     </main>
 
     <!-- Footer -->
     <footer>
-        <p>&copy; 2025 Next-Gen QA. All rights reserved.</p>
+        <p>&copy; 2024 Next-Gen QA | All Rights Reserved</p>
     </footer>
 
     <!-- <script src="{% static 'ngq_app/script.js'%}"></script> -->
     <script>
-        // click download button
-        document.getElementById("download-btn").addEventListener("click", () => {
-            window.location.href = "/download";
+        //// BUTTONS ////
+        // click download pdf button
+        document.getElementById("print-btn").addEventListener("click", () => {
+            window.open("/download_pdf");
         });
 
-        // click download pdf button
-        document.getElementById("download-pdf-btn").addEventListener("click", () => {
-            window.location.href = "/download_pdf";
+        // click download button
+        document.getElementById("download-btn").addEventListener("click", () => {
+            window.open("/download");
         });
 
         // click regenerate button
         document.getElementById("regenerate-btn").addEventListener("click", () => {
-            window.location.href = "/loading";
+            window.open("/results");
         });
 
         // click new url button
         document.getElementById("new-url-btn").addEventListener("click", () => {
-            window.location.href = "/";
+            window.open("/");
         });
+
+        //// FETCH / ASYNC FUNCTIONS ////
+        // Scraping
+        async function processData() {
+            try {
+                console.log("Scraping Begins");
+                const response = await fetch('/process_data', {
+                    signal: stop_fetch.signal,
+                    });
+
+                const data = await response.json();
+                if (data.status === 'completed') {
+                    processResults();
+                    // window.location.href = '/loading_results';
+                }
+            } catch (error) {
+                console.log("Closing page and its functions");
+                const response = await fetch('/cancel_scraping');
+
+                const data = await response.json();
+                if (data.status === 'completed') {
+                    console.log("Scraping Cancelled");
+                }
+            }
+        }
+        // Generation : Dynamic Results
+        const socket = new WebSocket('ws://'+ window.location.host +'/ws/updates/');
+            socket.onopen = () => {
+                console.log("Connection Opened");
+            }
+            socket.onmessage = function(event) {
+                // Parse the incoming JSON data
+                const context = JSON.parse(event.data);
+
+                // Dynamically update statistics
+                document.getElementById('test-url').innerText = context.url;
+                document.getElementById('total-elements').innerText = context.accurate_elements_count;
+                document.getElementById('buttons-count').innerText = context.buttons_count;
+                document.getElementById('links-count').innerText = context.links_count;
+                document.getElementById('headers-count').innerText = context.headers_count;
+                document.getElementById('paragraphs-count').innerText = context.paragraphs_count;
+                document.getElementById('submit-fields-count').innerText = context.submit_fields_count;
+                document.getElementById('input-fields-count').innerText = context.input_fields_count;
+                document.getElementById('test-case-total').innerText = context.elements_count;
+                document.getElementById('test-case-progress').innerText = context.test_case_count;
+
+                // Dynamically update Table
+                document.getElementById('table-container').innerHTML = context.test_cases_dynamic;
+            };
+        async function processResults() {
+            try {
+                console.log("Generation Begins");
+                document.getElementById('generation-status').innerText = "generating test cases..."
+                const response = await fetch('/process_results',{
+                    signal: stop_fetch.signal,
+                });
+                const data = await response.json();
+                if (data.status === 'completed') {
+                    document.getElementById('generation-status').innerText = "generation completed!"
+                    console.log("Generation Finished!")
+                    window.location.href = '/static_results';
+                }
+            } catch (error) {
+                // socket.close();
+                console.log("Closing page and its functions");
+                const response = await fetch('/cancel_generation');
+                
+                const data = await response.json();
+                if (data.status === 'completed') {
+                    console.log("Generation Cancelled");
+                }
+            }
+        }
+
+        //// STOP FUNCTIONS ////
+        // Stop Scraping
+        const stop_fetch = new AbortController();
+        
+        //// ON LOAD | ON UNLOAD ////
+        window.onload = function() {
+            // Start Scraping
+            // document.getElementById('generation-status').innerText = "scraping website..."
+            processData();
+        };
+        window.onbeforeunload = function() {
+            // Trigger All Stop Signals
+            stop_fetch.abort();
+
+            // // Socket Closing
+            // try {
+            //     console.log("Connection Closed");
+            // } catch (error) {
+            //     // Do Nothing
+            // }
+        }
+
+        // //// TAB IDENTIFICATION ////
+        // function generateUUID() {
+        //     return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, function(c) {
+        //         const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+        //         return v.toString(16);
+        //     });
+        // }
+        // const tabID = generateUUID();
     </script>
 </body>
 </html>
