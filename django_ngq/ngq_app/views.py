@@ -3,7 +3,9 @@
 # - Django Documentation (Getting Started) : https://docs.djangoproject.com/en/5.1/intro/tutorial01/
 # - Django Documentation (Static Files) : https://docs.djangoproject.com/en/5.1/howto/static-files/
 # - Django Documentation (Request/Session) : https://docs.djangoproject.com/en/5.1/topics/http/sessions/
-# - Django Documentation (Async, Uvicorn) : 
+# - Django Documentation (Async, Uvicorn, Daphne)
+# - GeeksforGeeks tutorials on CSS and Javascript
+# - Asyncio Python Documentation : https://docs.python.org/3/library/asyncio-task.html#asyncio.Task.cancel
 
 ## Django Imports + Time
 from django.shortcuts import render, redirect
@@ -25,9 +27,6 @@ from .tasks_store import tasks
 from channels.layers import get_channel_layer
 from asgiref.sync import async_to_sync, sync_to_async
 import asyncio
-
-## TODO : Address Two-Tab Generation / Scraping Potential Errors -> LIMITATION
-## TODO : Address Internal Errors
 
 ## INDEX PAGE ##
 def index(request):
@@ -185,7 +184,8 @@ async def cancel_generation(request):
     # request.session['generation_task'].cancel()
     return JsonResponse({'status': 'completed'})
 # Procedure Proper
-## TODO : ADDRESS MULTI TABS ARE UPDATED BY THE SAME GROUP WEBSOCKET ISSUE
+## OPTIONAL TODO : ADDRESS MULTI TABS ARE UPDATED BY THE SAME GROUP WEBSOCKET ISSUE
+# - Said theoretical issue might not actually occur due to the severe loading times. This is not the focus of user-testing and can be alloted as a genuine limitation.
 async def generation_procedure(request):
     ## Asynchronous (Update Frontend) Setup
     from .consumers import cancel_flags
@@ -246,7 +246,7 @@ async def generation_procedure(request):
             if (DEBUG_SETTING == 1):
                 print(f"test case {i} out of {total} generated")
             i += 1
-            if i == 1:
+            if i == 10:
                 break
     except asyncio.CancelledError:
         print('generation_procedure : cancel procedure begins')
