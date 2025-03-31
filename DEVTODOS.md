@@ -255,8 +255,10 @@
 - [x] UI Final Implementation
 - [~] Final Polishing + Creditation
   - [x] script.js separation
-  - [ ] polishing
+  - [ ] cleanup
+  - [ ] documentation/commenting
   - [ ] creditation
+  - [ ] listing of dependencies
   - [ ] final testing
 - [ ] Make Repository Public
 
