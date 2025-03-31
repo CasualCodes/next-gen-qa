@@ -122,7 +122,7 @@ document.addEventListener("DOMContentLoaded", () => {
             precondition: `Ensure ${type} exists`,
             steps: `Click/Interact with ${type}`,
             expected: `Expected behavior of ${type}`,
-            actual: `Actual behavior observed`
+            actual: `Actual behavior observed Actual behavior observed Actual behavior observed Actual behavior observe Actual behavior observed Actual behavior observed Actual behavior observed Actual behavior observed Actual behavior observed Actual behavior observed Actual behavior observed Actual behavior observed Actual behavior observed Actual behavior observed Actual behavior observed Actual behavior observed Actual behavior observed Actual behavior observed`
         };
     }
 
