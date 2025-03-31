@@ -355,7 +355,7 @@ main.results {
     color: white;
 }
 div {
-    width: 100%;
+    /* width: 100%; */
     overflow-x: auto;
 }
 table {

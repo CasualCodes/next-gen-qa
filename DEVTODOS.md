@@ -108,7 +108,7 @@
         - Can TRY to integrate, but we'll see in cycle 3
       - [#] Human Evaluation
 
-# RE: Cycle 3 Todos (Updated: 03-25-2025)
+# RE: Cycle 3 Todos (Updated: 03-31-2025)
 ## Section 1: Cleanup + Adding Credits
 - [x] Cleanup + Etc. (Documentation, Basic Security Measure, Etc.)
   - [x] Prompt Generator + LLM
@@ -241,7 +241,7 @@
   - Every after a test case is generated, render the page / update the page with AJAX
   - [x] Reimplementation
   - [X] Implement Frontend
-  - [ ] Polishing
+  - [x] Polishing
     - Ensure connection establishment and closing
     - Major Issue : Multi Tab Running - Websocket Connection
 - [#] PLAN B Branch : All The Dependencies
@@ -253,7 +253,11 @@
 # RE: Cycle 3 Todos (Updated: 03-31-2025)
 ## Section 1
 - [x] UI Final Implementation
-- [ ] Final Polishing + Creditatio-
+- [~] Final Polishing + Creditation
+  - [x] script.js separation
+  - [ ] polishing
+  - [ ] creditation
+  - [ ] final testing
 - [ ] Make Repository Public
 
 ## Section 2 [Requires Section 1 to be completed]: Deployment
