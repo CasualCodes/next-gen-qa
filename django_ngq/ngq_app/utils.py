@@ -382,6 +382,11 @@ def remove_common_error(output : str, setting : int = 0):
                 output = output[:index]
             except Exception:
                 pass
+        try:
+            if output[1] == "\n":
+                output = output[2:]
+        except Exception:
+            pass
     if (setting == 1 or setting == 2):
         # Adjustments are strings that are not intended to be deleted, but instead adjusted
         adjustments = ["Preconditions~", "Test Steps~", "Expected Result~"]
@@ -391,6 +396,7 @@ def remove_common_error(output : str, setting : int = 0):
 
 ## Load/Reload Model
 def load_model_chain(template : str =  template, model_str : str = model_str, temperature=0):
+
     prompt = ChatPromptTemplate.from_template(template)
     # For Non-Fine Tuned
     if TEMPLATE_SETTING == 0:
@@ -478,10 +484,16 @@ def create_table_dataset(llm_output, ids : list, saved_index : int = 0, prompts 
             # Test Case Objective
             objective.append(split_test_case[0])
             # Test Case Precondition
+            # if split_test_case[1][1] == "\n":
+                # split_test_case[1] = split_test_case[1][2:]
             precondition.append(split_test_case[1])
             # Test Case Steps 
+            # if split_test_case[2][1] == "\n":
+                # split_test_case[2] = split_test_case[2][2:]
             test_steps.append(split_test_case[2])
             # Test Case Expected Output
+            # if split_test_case[3][1] == "\n":
+            #     split_test_case[3] = split_test_case[3][2:]
             expected_result.append(split_test_case[3])
             # Test Case Actual Result
             actual_result.append("Pass/Fail")

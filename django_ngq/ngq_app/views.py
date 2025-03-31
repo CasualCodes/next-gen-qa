@@ -126,18 +126,20 @@ def update_context(request):
     category_count = get_accurate_element_count(request.session['ids'], request.session['indices'], request.session['divided_scraped_data'])
     
     # Create HTML tables from dataframe
+    table_category_ids = ["-buttons","-links","-headers","-paragraphs","-formsubmits","-inputs"]
     prompts = table_prompt_generator(request.session['scraped_data'], request.session['url'])
     request.session['tables'] = create_tables(request.session['divided_llm_output'], request.session['ids'], request.session['indices'], prompts) #, prompts
     i = 0
     while i < len(request.session['tables']):
-        (request.session['tables'])[i] = (request.session['tables'])[i].to_html(table_id="results-table", index=False).replace('\\n', '<br>').replace('<thead>', '<tbody>')
+        (request.session['tables'])[i] = (request.session['tables'])[i].to_html(table_id=f"table{table_category_ids[i]}", index=False).replace('\\n', '<br>').replace('<thead>', '<tbody>')
         i+=1
 
     ## Safe Dynamic Table Divsion
     i = 0
+    div_opening = "<div class=\"table-section\" style=\"display: block;\", \"overflow-x: auto;\">" 
     request.session['dynamic_test_cases'] = ""
     while i < len(request.session['tables']):
-        request.session['dynamic_test_cases'] = request.session['dynamic_test_cases'] + f"<h3>{category_count[i]} {categories[i]}s</h3>" + (request.session['tables'])[i]
+        request.session['dynamic_test_cases'] = request.session['dynamic_test_cases'] + div_opening + f"<h2 style=\"color: white;\">{categories[i]}s : {category_count[i]}</h2>" + (request.session['tables'])[i] + "</div>"
         i+=1
         
     # Other Buttons / UI elements
@@ -244,8 +246,8 @@ async def generation_procedure(request):
             if (DEBUG_SETTING == 1):
                 print(f"test case {i} out of {total} generated")
             i += 1
-            # if i == 3:
-            #     break
+            if i == 10:
+                break
     except asyncio.CancelledError:
         print('generation_procedure : cancel procedure begins')
         raise
