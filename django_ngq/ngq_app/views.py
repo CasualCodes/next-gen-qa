@@ -143,9 +143,11 @@ def update_context(request):
     ## Safe Dynamic Table Divsion
     i = 0
     div_opening = "<div class=\"table-section\" style=\"display: block;\", \"overflow-x: auto;\">" 
+    div_closing = "</div>"
     request.session['dynamic_test_cases'] = ""
     while i < len(request.session['tables']):
-        request.session['dynamic_test_cases'] = request.session['dynamic_test_cases'] + div_opening + f"<h2 style=\"color: white;\">{categories[i]}s : {category_count[i]}</h2>" + (request.session['tables'])[i] + "</div>"
+        category_label = f"<h2 style=\"color: white;\">{categories[i]}s : {category_count[i]}</h2>"
+        request.session['dynamic_test_cases'] = request.session['dynamic_test_cases'] + div_opening + category_label + (request.session['tables'])[i] + div_closing
         i+=1
         
     # Other Buttons / UI elements

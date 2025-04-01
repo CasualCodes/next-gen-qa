@@ -540,9 +540,11 @@ def get_accurate_element_count(sub_ids, indices, divided_scraped_data):
     return_data = []
     first_index = 0
     i = 0
+    not_index_zero = True
     first_index = 0
     for index in indices:
-        if index == 0:
+        if index == 0 and not_index_zero == True:
+            not_index_zero = False
             continue
         if len(divided_scraped_data[i]) == 0:
             i+=1
