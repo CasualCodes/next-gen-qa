@@ -14,6 +14,9 @@ Libraries:
 - [ ] daphne - for asynchronous
 - [ ] websocket - for frontend updates
 
+Environment:
+- [ ] python-dotnenv
+
 Fine-tuning:
 - Using Google Colab T4 GPU
   - Already has installation code

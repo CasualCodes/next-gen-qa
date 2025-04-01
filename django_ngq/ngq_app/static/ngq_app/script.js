@@ -112,22 +112,22 @@ if (window.location.pathname.includes("/static_results")) {
     //// BUTTONS ////
     // click download pdf button
     document.getElementById("print-btn").addEventListener("click", () => {
-        window.open("/download_pdf");
+        window.open("/download_pdf"); // window.location.href = "/download_pdf";
     });
 
     // click download button
     document.getElementById("download-btn").addEventListener("click", () => {
-        window.open("/download");
+        window.open("/download"); // window.location.href = "/download"; 
     });
 
     // click regenerate button
     document.getElementById("regenerate-btn").addEventListener("click", () => {
-        window.open("/results");
+        window.location.href = "/results"; // window.open("/results");
     });
 
     // click new url button
     document.getElementById("new-url-btn").addEventListener("click", () => {
-        window.open("/");
+        window.location.href = "/"; // window.open("/");
     });
 }
 

@@ -1,3 +1,8 @@
+####################
+## DJANGO BACKEND ##
+####################
+# - contains and implements the most relevant part of the back-end setup, including pipeline integrations and frontend updates.
+
 ## Code References
 # - Microsoft Copilot advice
 # - Django Documentation (Getting Started) : https://docs.djangoproject.com/en/5.1/intro/tutorial01/
@@ -6,6 +11,9 @@
 # - Django Documentation (Async, Uvicorn, Daphne)
 # - GeeksforGeeks tutorials on CSS and Javascript
 # - Asyncio Python Documentation : https://docs.python.org/3/library/asyncio-task.html#asyncio.Task.cancel
+
+## Note
+# - There are commented code to represent the sync forms of asynchronous request.session variable setting/getting
 
 ## Django Imports + Time
 from django.shortcuts import render, redirect
@@ -31,7 +39,6 @@ import asyncio
 ## INDEX PAGE ##
 def index(request):
     form = URLForm()
-    # Index page pseudocode (Core function)
     if request.method == "POST":
         form = URLForm(request.POST)
         if form.is_valid():
@@ -143,19 +150,12 @@ def update_context(request):
         
     # Other Buttons / UI elements
     url = request.session['url']
-    # from datetime import date
-    # timestamp = (date.today()).strftime("%Y-%m-%d %H:%M:%S") 
     test_case_count = len(request.session['llm_output'])
     elements_count = len(request.session['scraped_data'])
     accurate_elements_count = sum(category_count)
 
     # Store Context
     request.session['full_context'] = {
-        ## LEGACY CONTEXT / UNUSED CONTEXT
-        # "test_cases_undivided" : request.session['undivided_llm_output'],
-        # "timestamp" : timestamp, 
-        # "test_cases" : request.session['tables'], 
-        ## USED CONTEXT
         "test_cases_dynamic" : request.session['dynamic_test_cases'],
         "url" : url, 
         "test_case_count" : test_case_count, 
@@ -179,21 +179,21 @@ async def cancel_generation(request):
     print(f"cancel_generation {task_id}")
     try:
         tasks[task_id]['generation_task'].cancel()
+        # request.session['generation_task'].cancel()
     except Exception:
         print("this error is raised by successful generation cancellation")
-    # request.session['generation_task'].cancel()
     return JsonResponse({'status': 'completed'})
 # Procedure Proper
 ## OPTIONAL TODO : ADDRESS MULTI TABS ARE UPDATED BY THE SAME GROUP WEBSOCKET ISSUE
 # - Said theoretical issue might not actually occur due to the severe loading times. This is not the focus of user-testing and can be alloted as a genuine limitation.
 async def generation_procedure(request):
     ## Asynchronous (Update Frontend) Setup
-    from .consumers import cancel_flags
+    # from .consumers import cancel_flags
     channel_layer = get_channel_layer()
     session_id = request.session.session_key
 
     print(f"Process_Results {session_id}")
-    cancel_flag = cancel_flags.get(session_id)
+    # cancel_flag = cancel_flags.get(session_id)
     group_name = "updates"
 
     ## Integrate Test Case Generation Code
@@ -211,26 +211,12 @@ async def generation_procedure(request):
         i = 0
         total = len(scraped_data)
         for item in scraped_data:
-            # # Early Cancellation Attempt : First Check
-            # if cancel_flag and cancel_flag.is_set():
-            #     print("Processing Scraped Data is Cancelled Early")
-            #     break
-
             test_case = chain.invoke({"ui_element": str(item), "url": request.session['url']})
             test_case = str(remove_common_error(test_case))
 
-            # # Early Cancellation Attempt : Final Check
-            # if cancel_flag and cancel_flag.is_set():
-            #     print("Processing Scraped Data is Cancelled Early")
-            #     break
-
             # Update LLM_Output
             return_data.append(test_case)
-            # print(len(return_data))
             await sync_to_async(request.session.__setitem__)('llm_output', return_data)
-            # out = await sync_to_async(request.session.get)('llm_output', default=None)
-            # print(len(out))
-            # request.session['llm_output'].append(test_case)
             update_context(request)
             updated_context = await sync_to_async(request.session.get)('full_context', default=None)
             # Update Frontend
@@ -246,8 +232,6 @@ async def generation_procedure(request):
             if (DEBUG_SETTING == 1):
                 print(f"test case {i} out of {total} generated")
             i += 1
-            if i == 10:
-                break
     except asyncio.CancelledError:
         print('generation_procedure : cancel procedure begins')
         raise
@@ -292,11 +276,3 @@ def download_pdf(request):
     response = HttpResponse(pdf, content_type='application/pdf')
     response['Content-Disposition'] = f'attachment; filename="{filename}.pdf"'
     return response
-
-# ## LOADING PAGE ##
-# def loading(request):
-#     # Javascript in loading.html does the threading
-#     return render(request, "ngq_app/loading.html")
-# ## LOADING RESULTS ##
-# def loading_results(request):
-#     return render(request, "ngq_app/loading_results.html")

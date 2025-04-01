@@ -250,16 +250,26 @@
 # Optional TODOS (Updated: 03-14-2025)
   - Prompt Generator + LLM : add time to generation to check time generated per test case
 
-# RE: Cycle 3 Todos (Updated: 03-31-2025)
+# RE: Cycle 3 Todos (Updated: 04-01-2025)
 ## Section 1
 - [x] UI Final Implementation
-- [~] Final Polishing + Creditation
+- [x] Final Polishing + Creditation
   - [x] script.js separation
   - [x] creditation
   - [x] listing of dependencies
-  - [ ] cleanup
-  - [ ] documentation/commenting
-  - [ ] final testing
+  - [x] cleanup
+  - [x] documentation/commenting
+  - [x] final testing
+    - [x] We may want to add some DEBUG variable statements
+      - No need, do this in a branch instead
+    - [x] We may want to setup .env setup instructions for deployment
+      - simply use :
+        - from dotenv import load_dotenv
+        - load_dotenv()
+        - VARIABLE = os.getenv("VARIABLE")
+    - [x] Might want to address form validation (user really inputs URL)
+    - [x] We may want to give an alert before user leaves page
+      - Can't do it for now without extensive experimentation
 - [ ] Make Repository Public
 
 ## Section 2 [Requires Section 1 to be completed]: Deployment
