@@ -274,5 +274,8 @@
 
 ## Section 2 [Requires Section 1 to be completed]: Deployment
 - [ ] Git Pull
-- [ ] Basic Security Setup
+- [ ] Basic Setup - [Remember-that-our-known-procedures-are-not-for-production]
+  - [ ] .env setup at django_ngq
+  - [ ] security setup
+  - [ ] migration setup : python manage.py migrate 
 - [ ] Run Server
