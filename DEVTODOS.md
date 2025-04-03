@@ -1,5 +1,6 @@
 # Next Gen QA
 - Dev TODOS
+- Serves as dev journal during development
 
 # Setup Commit Notes (01-09-2025)
 - created folders
