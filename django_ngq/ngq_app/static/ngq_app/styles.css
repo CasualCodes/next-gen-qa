@@ -91,15 +91,15 @@ nav a:hover {
     /* display: flex; */
     flex-direction: column;
     align-items: center;
-    width: 70%;
+    width: 80%;
     gap: 15px;
     margin-top: 10px;
+    margin-bottom: 10px;
 }
 .hero input {
     padding: 10px;
     font-size: 16px;
-    /* width: 100%; */
-    max-width: 80%;
+    width: 100%;
     border: 1px solid #ccc;
     border-radius: 15px;
     text-align: center;
@@ -117,13 +117,20 @@ nav a:hover {
     background: black;
     color: #ffd600;
 }
-/*input*/
-form{
+/*right*/
+.hero-image {
+    flex: 1;
+    max-width: 50%;
     display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 10px;
+    justify-content: center;
+    padding-top: 10px;
 }
+.hero-image img {
+    max-width: 80%;
+    height: auto;
+    border-radius: 8px;
+}
+/*input*/
 input[type=submit] {
     /* padding: 15px 50px; */
     font-size: 16px;
@@ -354,10 +361,6 @@ main.results {
     overflow-x: auto;
     color: white;
 }
-div {
-    /* width: 100%; */
-    overflow-x: auto;
-}
 table {
     width: 100%;
     border-collapse: separate;
@@ -373,6 +376,7 @@ th {
     font-weight: bold;
     padding: 14px;
     border-bottom: 2px solid rgba(255, 255, 255, 0.4);
+    text-align: center;
 }
 td {
     padding: 12px;
