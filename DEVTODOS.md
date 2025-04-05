@@ -251,7 +251,7 @@
 # Optional TODOS (Updated: 03-14-2025)
   - Prompt Generator + LLM : add time to generation to check time generated per test case
 
-# RE: Cycle 3 Todos (Updated: 04-01-2025)
+# RE: Cycle 3 Todos (Updated: 04-05-2025)
 ## Section 1
 - [x] UI Final Implementation
 - [x] Final Polishing + Creditation
@@ -271,12 +271,13 @@
     - [x] Might want to address form validation (user really inputs URL)
     - [x] We may want to give an alert before user leaves page
       - Can't do it for now without extensive experimentation
-- [ ] Make Repository Public
+- [x] Make Repository Public
 
 ## Section 2 [Requires Section 1 to be completed]: Deployment
-- [ ] Git Pull
-- [ ] Basic Setup - [Remember-that-our-known-procedures-are-not-for-production]
-  - [ ] .env setup at django_ngq
-  - [ ] security setup
-  - [ ] migration setup : python manage.py migrate 
-- [ ] Run Server
+- [x] Git Pull
+- [x] Basic Setup - [Remember-that-our-known-procedures-are-not-for-production]
+  - [x] .env setup at django_ngq
+  - [x] security setup
+  - [x] migration setup : python manage.py migrate 
+- [x] Run Server
+- CONCLUSION: Local User Testing is Preferred, System Requirements of LLMs are too high.

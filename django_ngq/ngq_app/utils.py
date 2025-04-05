@@ -23,18 +23,10 @@ def setup_driver():
         driver = webdriver.Firefox(options=options) # Default with Firefox
     except Exception:
         try : 
-            driver = webdriver.Chrome() # Default with Chrome            
-            ## driver = webdriver.Chrome(options=options)
-
-            ## Uncomment when setting up for gcolab (and using chrome)
-            # from selenium.webdriver import ChromeOptions
-            # from selenium.webdriver.chrome.service import Service
-            # from webdriver_manager.chrome import ChromeDriverManager
-            # from selenium.webdriver.chrome.options import Options
-            # import google_colab_selenium as gs
-            # options = ChromeOptions()
-            # options.add_argument("--headless")
-            # driver = gs.Chrome()
+            from selenium.webdriver.chrome.options import Options
+            options = Options()
+            options.add_argument("--headless=new")
+            driver = webdriver.Chrome(options=options) # Default with Chrome            
         except Exception:
             try : 
                 options = webdriver.EdgeOptions()

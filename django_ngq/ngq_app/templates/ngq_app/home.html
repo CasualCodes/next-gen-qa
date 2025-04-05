@@ -30,6 +30,13 @@
             <form class="input-container" method="post">
                 {% csrf_token %}
                 {{ form }}
+                {% for message in messages %}
+                <div class="alert alert-success">
+                    <p style="color:white; margin:0px,0px,5px,0px;" class="close" data-dismiss="alert">
+                        {{ message }}
+                    </p>
+                </div>
+                {% endfor %}
                 <input type="submit" id="generate-btn" value="Generate">
             </form>
         </div>

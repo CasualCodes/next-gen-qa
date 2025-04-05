@@ -22,6 +22,7 @@ from django.http import HttpResponseRedirect
 from django.shortcuts import render
 from django.http import JsonResponse
 import time # for checking runtime
+from django.contrib import messages
 
 ## Imports for Tables and Download
 import pandas as df
@@ -41,11 +42,12 @@ def index(request):
     form = URLForm()
     if request.method == "POST":
         form = URLForm(request.POST)
-        if form.is_valid():
+        if form.is_valid() and (".org" in form.cleaned_data['url'] or ".gov" in form.cleaned_data['url'] or ".edu" in form.cleaned_data['url']):
             request.session['url'] = form.cleaned_data['url']
             return redirect("results", permanent=True)
         else :
-            print(False)
+            messages.error(request, "Invalid URL. Only .org, .edu, or .gov is allowed.")
+            return redirect("/")
 
     # Load HTML
     return render(request, "ngq_app/home.html", {"form": form})
