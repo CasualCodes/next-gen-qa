@@ -4,5 +4,5 @@ __pycache__
 django_ngq/db.sqlite3
 fine_tuning/fine_tuning_cycles
 fine_tuning/datasets
-django_ngq/.env
+.env
 django_ngq/ngq_app/templates/ngq_app/to-delete
